@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args){
         System.out.println("Hello World!");
         System.out.println("Git vim test");
-
+        System.out.println("ciao");
         Ingredient a = new Ingredient();
         Ingredient b = new Ingredient("Nutella",1);
 
