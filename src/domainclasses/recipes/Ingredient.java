@@ -67,6 +67,17 @@ public class Ingredient {
 
     /*Methods Here*/
 
+    public String stringType(){
+        if (this.type == 1)
+            return "mL";
+        if (this.type == 2)
+            return "g";
+        if(this.type == 3)
+            return "pz.";
+        else
+            return "???";
+    };
+
     /*To Here*/
 
     @Override
