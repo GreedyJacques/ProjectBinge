@@ -1,6 +1,7 @@
 package launchcode;
 
 import domainclasses.recipes.*;
+import graphicalinterface.*;
 
 public class Main {
     public static void main(String[] args){
@@ -18,5 +19,9 @@ public class Main {
         System.out.println(c);
         System.out.println(d);
         System.out.println(e);
+
+        new LaunchPanel();
     }
+
+
 }
