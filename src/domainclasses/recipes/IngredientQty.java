@@ -21,20 +21,19 @@ public class IngredientQty extends Ingredient {
         this.qty = qty;
     }
 
+    public double getTotKcal() {
+        return qty * kcal;
+    }
+
     @Override
     public String toString() {
-        String unit = "pz.";
-        if (this.type == 1)
-            unit = "mL";
-        if (this.type == 2)
-            unit = "g";
         return "IngredientQty{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", type=" + type +
                 ", kcal=" + kcal +
-                "(" + kcal * qty + ")" +
-                ", qty=" + qty + unit +
+                "(" + getTotKcal() + ")" +
+                ", qty=" + qty + stringType() +
                 '}';
     }
 }
