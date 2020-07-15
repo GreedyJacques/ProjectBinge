@@ -20,7 +20,7 @@ public class Main {
         System.out.println(d);
         System.out.println(e);
 
-        new LaunchPanel();
+        new MainFrame();
     }
 
 

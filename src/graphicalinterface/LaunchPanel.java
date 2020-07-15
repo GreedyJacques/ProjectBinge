@@ -26,7 +26,7 @@ public class LaunchPanel extends JFrame implements ActionListener {
         JPanel p2 = new JPanel();
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        JComponent panel1 = new JTextPane();
+        JTextPane panel1 = new JTextPane();
         tabbedPane.addTab("tab 1", panel1);
 
 
