@@ -9,7 +9,7 @@ public class IngredientQty extends Ingredient {
     }
 
     public IngredientQty(Ingredient ingredient, int qty) {
-        super(ingredient.getId(), ingredient.getName(), ingredient.getType());
+        super(ingredient.getId(), ingredient.getName(), ingredient.getType(), ingredient.getKcal());
         this.qty = qty;
     }
 
@@ -27,6 +27,7 @@ public class IngredientQty extends Ingredient {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", type=" + type +
+                ", kcal" + kcal +
                 ", qty=" + qty +
                 '}';
     }
