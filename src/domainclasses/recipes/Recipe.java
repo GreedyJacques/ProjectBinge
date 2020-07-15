@@ -66,4 +66,15 @@ public class Recipe {
     public void setCooktime(int cooktime) {
         this.cooktime = cooktime;
     }
+
+    @Override
+    public String toString() {
+        return "Recipe{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", ingredients=" + ingredients.size() +
+                ", preptime=" + preptime +
+                ", cooktime=" + cooktime +
+                '}';
+    }
 }
