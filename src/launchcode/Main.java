@@ -25,6 +25,7 @@ public class Main {
         System.out.println(e);
 
         new MainFrame();
+        new RecipeDetailPanel("Best Ricetta");
     }
 
 
