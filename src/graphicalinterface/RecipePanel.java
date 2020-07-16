@@ -26,8 +26,8 @@ public class RecipePanel extends JPanel implements ActionListener {
         add(new JLabel("Ordina Per:"), "top");
         add(new JPanel(new GridLayout(1,8)));
         add(new JLabel(""));
-        add(new JTextPane(),"span 2 4,grow");
-        add(new JLabel(""),"grow");
+        add(new JTextPane(),"span 2 4, grow");
+        add(new JLabel(""),"");
         add(addButton,"right");
         add(removeButton,"right");
         add(openButton,"right");
