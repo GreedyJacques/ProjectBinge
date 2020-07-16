@@ -19,7 +19,7 @@ public class MainFrame extends JFrame implements ActionListener {
         JTabbedPane mainpanel = new JTabbedPane();
         RecipePanel recipepanel = new RecipePanel();
         ShoppingPanel shoppingpanel = new ShoppingPanel();
-        JPanel inventorypanel = new JPanel();
+        JPanel inventorypanel = new InventoryPanel();
 
         JMenuBar menuBar= new JMenuBar();
 
