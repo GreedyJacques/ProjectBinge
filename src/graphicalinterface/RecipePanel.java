@@ -4,6 +4,8 @@ import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -60,6 +62,17 @@ public class RecipePanel extends JPanel implements ActionListener {
         add(addButton, "right");
         add(removeButton, "right");
         add(openButton, "right");
+
+        ListSelectionModel model = recipeTable.getSelectionModel();
+        model.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (! model.isSelectionEmpty()){
+                    int selectedRow = model.getMinSelectionIndex();
+                    JOptionPane.showMessageDialog(null,"Selected row " + selectedRow);
+                }
+            }
+        });
 
     }
 

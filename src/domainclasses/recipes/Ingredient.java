@@ -57,6 +57,15 @@ public class Ingredient {
         this.type = type;
     }
 
+    public void setType(String type){
+        if (type.equals("mL"))
+            this.type = 1;
+        if (type.equals("g"))
+            this.type = 2;
+        if (type.equals("pz."))
+            this.type = 3;
+    }
+
     public double getKcal() {
         return kcal;
     }

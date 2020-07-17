@@ -12,7 +12,7 @@ public class RecipeDetailPanel extends JFrame implements ActionListener {
 
     public RecipeDetailPanel(String title){
         super(title);
-        JPanel mainpanel = new JPanel(new MigLayout("fill, wrap 3", "50[grow,fill]20[grow,fill]20[]","50[grow, fill][][]50"));
+        JPanel mainpanel = new JPanel(new MigLayout("fill, wrap 3", "50[grow,fill]20[grow,fill]20[]","50[][][]50"));
 
 
         removeButton = new JButton("RIMUOVI");
@@ -29,6 +29,7 @@ public class RecipeDetailPanel extends JFrame implements ActionListener {
         modifyButton.setPreferredSize(new Dimension(175,50));
 
 
+        mainpanel.add(new JTextPane(),"span 1 3, grow");
         mainpanel.add(new JTextPane(),"span 1 3, grow");
         mainpanel.add(new JLabel(""));
 

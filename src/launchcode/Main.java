@@ -9,7 +9,8 @@ public class Main {
     public static void main(String[] args){
 
         Ingredient a = new Ingredient();
-        Ingredient b = new Ingredient("Nutella",2,5);
+        Ingredient b = new Ingredient("Nutella",1,5);
+
 
         IngredientQty c = new IngredientQty();
         IngredientQty d = new IngredientQty(b,500);
