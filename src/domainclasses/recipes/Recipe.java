@@ -19,6 +19,15 @@ public class Recipe {
         this.cooktime = 0;
     }
 
+    public Recipe(int ID) {
+        this.id = ID; //TODO
+        this.name = "New Recipe";
+        this.ingredients = new ArrayList<IngredientQty>();
+        this.procedure = "Procedure goes here";
+        this.preptime = 0;
+        this.cooktime = 0;
+    }
+
     public int getId() {
         return id;
     }

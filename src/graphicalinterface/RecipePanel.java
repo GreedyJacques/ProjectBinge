@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class RecipePanel extends JPanel implements ActionListener {
 
@@ -31,7 +32,7 @@ public class RecipePanel extends JPanel implements ActionListener {
         ArrayList<Recipe> testRecipeList = new ArrayList<>();
 
         testRecipeList.add(new Recipe());
-        testRecipeList.add(new Recipe());
+        testRecipeList.add(new Recipe(5));
         testRecipeList.add(new Recipe());
         /*end test*/
 
@@ -45,7 +46,7 @@ public class RecipePanel extends JPanel implements ActionListener {
             recipeMatrix[i][4] = testRecipeList.get(i).getId();
         }
 
-        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"Nome", "kCal", "Tempo Preparazione", "Tempo Cottura"});
+        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"Nome", "kCal", "Tempo Preparazione", "Tempo Cottura", "ID"});
 
         JTable recipeTable = new JTable(recipeModel);
         JScrollPane scrollPanel = new JScrollPane(recipeTable);
@@ -68,8 +69,9 @@ public class RecipePanel extends JPanel implements ActionListener {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (! model.isSelectionEmpty()){
-                    int selectedRow = model.getMinSelectionIndex();
-                    JOptionPane.showMessageDialog(null,"Selected row " + selectedRow);
+                    int row= recipeTable.getSelectedRow();
+                    Object selectedrecipe = recipeTable.getValueAt(row,4);
+                    JOptionPane.showMessageDialog(null,"Selected ID " + selectedrecipe);
                 }
             }
         });
