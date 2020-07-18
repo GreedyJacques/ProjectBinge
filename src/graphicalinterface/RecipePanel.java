@@ -12,21 +12,37 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class RecipePanel extends JPanel implements ActionListener {
+public class RecipePanel extends JPanel implements ActionListener, KeyListener {
+
+    private JButton addButton, removeButton,
+            openButton, filterButton, searchButton;
+
+    private JTextField searchbar;
 
     public RecipePanel() {
-        super(new MigLayout("fill, wrap 3", "50[][grow,fill]20[]", "50[][]20[grow,fill][][][]50"));
+        super(new MigLayout("fill, wrap 3", "50[][grow,fill]20[]", "50[][]20[grow,fill][]150[][][]50"));
 
-        JButton addButton = new JButton("ADD");
-        JButton removeButton = new JButton("REMOVE");
-        JButton openButton = new JButton("OPEN");
+        addButton = new JButton("AGGIUNGI");
+        removeButton = new JButton("RIMUOVI");
+        openButton = new JButton("APRI");
+        filterButton = new JButton("FILTRI");
+        searchButton = new JButton("CERCA");
+
+        searchbar = new JTextField("");
 
         addButton.setPreferredSize(new Dimension(175, 50));
         removeButton.setPreferredSize(new Dimension(175, 50));
         openButton.setPreferredSize(new Dimension(175, 50));
+        filterButton.setPreferredSize(new Dimension(175, 50));
+
+
+        searchButton.addActionListener(this);
+        searchbar.addKeyListener(this);
 
         /*Test recipe list*/
         ArrayList<Recipe> testRecipeList = new ArrayList<>();
@@ -53,13 +69,14 @@ public class RecipePanel extends JPanel implements ActionListener {
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Ricette"));
 
         add(new JLabel("Cerca:"), "right");
-        add(new JTextField(""), "");
-        add(new JButton("Filtri"));
+        add(searchbar, "");
+        add(searchButton);
         add(new JLabel("Ordina Per:"), "top");
         add(new JPanel(new GridLayout(1, 8)));
         add(new JLabel(""));
-        add(scrollPanel, "span 2 4, grow");
+        add(scrollPanel, "span 2 5, grow");
         add(new JLabel(""), "");
+        add(filterButton, "right");
         add(addButton, "right");
         add(removeButton, "right");
         add(openButton, "right");
@@ -68,10 +85,10 @@ public class RecipePanel extends JPanel implements ActionListener {
         model.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (! model.isSelectionEmpty()){
-                    int row= recipeTable.getSelectedRow();
-                    Object selectedrecipe = recipeTable.getValueAt(row,4);
-                    JOptionPane.showMessageDialog(null,"Selected ID " + selectedrecipe);
+                if (!model.isSelectionEmpty()) {
+                    int row = recipeTable.getSelectedRow();
+                    Object selectedrecipe = recipeTable.getValueAt(row, 4);
+                    JOptionPane.showMessageDialog(null, "Selected ID " + selectedrecipe);
                 }
             }
         });
@@ -80,6 +97,30 @@ public class RecipePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //TODO
+        if (e.getSource() == searchButton) {
+            String searchedthing = searchbar.getText();
+            JOptionPane.showMessageDialog(null, "you searched for: " + searchedthing);
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+        String searchedthing = searchbar.getText();
+
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            JOptionPane.showMessageDialog(null, "you searched for: " + searchedthing);
+        }
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }
