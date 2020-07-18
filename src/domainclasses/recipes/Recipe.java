@@ -76,6 +76,20 @@ public class Recipe {
         this.cooktime = cooktime;
     }
 
+    public static Object[][] toMatrix(ArrayList<Recipe> recipes){
+        Object[][] out = new Object[recipes.size()][5];
+
+        for (int i = 0; i < recipes.size(); ++i) {
+            out[i][0] = recipes.get(i).getId();
+            out[i][1] = recipes.get(i).getName();
+            out[i][2] = 1000;
+            out[i][3] = recipes.get(i).getPreptime();
+            out[i][4] = recipes.get(i).getCooktime();
+        }
+
+        return out;
+    }
+
     @Override
     public String toString() {
         return "Recipe{" +

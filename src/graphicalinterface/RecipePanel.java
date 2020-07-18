@@ -22,7 +22,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
     private JButton addButton, removeButton,
             openButton, filterButton, searchButton;
 
-    private JTextField searchbar;
+    private JTextField searchBar;
 
     public RecipePanel() {
         super(new MigLayout("fill, wrap 3", "50[][grow,fill]20[]", "50[][]20[grow,fill][]150[][][]50"));
@@ -33,16 +33,16 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         filterButton = new JButton("FILTRI");
         searchButton = new JButton("CERCA");
 
-        searchbar = new JTextField("");
+        searchBar = new JTextField("");
 
         addButton.setPreferredSize(new Dimension(175, 50));
         removeButton.setPreferredSize(new Dimension(175, 50));
         openButton.setPreferredSize(new Dimension(175, 50));
-        filterButton.setPreferredSize(new Dimension(175, 50));
-
+        filterButton.setPreferredSize(new Dimension(75, 30));
+        searchButton.setPreferredSize(new Dimension(75, 30));
 
         searchButton.addActionListener(this);
-        searchbar.addKeyListener(this);
+        searchBar.addKeyListener(this);
 
         /*Test recipe list*/
         ArrayList<Recipe> testRecipeList = new ArrayList<>();
@@ -52,42 +52,35 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         testRecipeList.add(new Recipe());
         /*end test*/
 
-        Object[][] recipeMatrix = new Object[testRecipeList.size()][5];
+        Object[][] recipeMatrix = Recipe.toMatrix(testRecipeList);
 
-        for (int i = 0; i < testRecipeList.size(); ++i) {
-            recipeMatrix[i][0] = testRecipeList.get(i).getName();
-            recipeMatrix[i][1] = 1000;
-            recipeMatrix[i][2] = testRecipeList.get(i).getPreptime();
-            recipeMatrix[i][3] = testRecipeList.get(i).getCooktime();
-            recipeMatrix[i][4] = testRecipeList.get(i).getId();
-        }
 
-        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"Nome", "kCal", "Tempo Preparazione", "Tempo Cottura", "ID"});
+        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "Tempo Preparazione", "Tempo Cottura"});
 
         JTable recipeTable = new JTable(recipeModel);
         JScrollPane scrollPanel = new JScrollPane(recipeTable);
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Ricette"));
 
         add(new JLabel("Cerca:"), "right");
-        add(searchbar, "");
-        add(searchButton);
+        add(searchBar, "");
+        add(searchButton, "left");
         add(new JLabel("Ordina Per:"), "top");
         add(new JPanel(new GridLayout(1, 8)));
-        add(new JLabel(""));
+        add(filterButton, "left");
         add(scrollPanel, "span 2 5, grow");
         add(new JLabel(""), "");
-        add(filterButton, "right");
+        add(new JLabel(""));
         add(addButton, "right");
         add(removeButton, "right");
         add(openButton, "right");
 
-        ListSelectionModel model = recipeTable.getSelectionModel();
-        model.addListSelectionListener(new ListSelectionListener() {
+        ListSelectionModel selectionModel = recipeTable.getSelectionModel();
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (!model.isSelectionEmpty()) {
+                if (!selectionModel.isSelectionEmpty()) {
                     int row = recipeTable.getSelectedRow();
-                    Object selectedrecipe = recipeTable.getValueAt(row, 4);
+                    Object selectedrecipe = recipeTable.getValueAt(row, 0);
                     JOptionPane.showMessageDialog(null, "Selected ID " + selectedrecipe);
                 }
             }
@@ -98,8 +91,8 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == searchButton) {
-            String searchedthing = searchbar.getText();
-            JOptionPane.showMessageDialog(null, "you searched for: " + searchedthing);
+            String searchedThing = searchBar.getText();
+            JOptionPane.showMessageDialog(null, "you searched for: " + searchedThing);
         }
     }
 
@@ -111,10 +104,10 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
 
-        String searchedthing = searchbar.getText();
+        String searchedThing = searchBar.getText();
 
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            JOptionPane.showMessageDialog(null, "you searched for: " + searchedthing);
+            JOptionPane.showMessageDialog(null, "you searched for: " + searchedThing);
         }
 
     }
