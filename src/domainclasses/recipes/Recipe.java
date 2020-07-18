@@ -82,7 +82,7 @@ public class Recipe {
         for (int i = 0; i < recipes.size(); ++i) {
             out[i][0] = recipes.get(i).getId();
             out[i][1] = recipes.get(i).getName();
-            out[i][2] = 1000;
+            out[i][2] = recipes.get(i).getKcal();
             out[i][3] = recipes.get(i).getPreptime();
             out[i][4] = recipes.get(i).getCooktime();
         }
@@ -101,12 +101,19 @@ public class Recipe {
         return out;
     }
 
-    public static Recipe findRecipe(ArrayList<Recipe> recipes, int id){
-        for(Recipe r : recipes){
-            if(r.getId() == id)
+    public static Recipe findRecipe(ArrayList<Recipe> recipes, int id) {
+        for (Recipe r : recipes) {
+            if (r.getId() == id)
                 return r;
         }
         return new Recipe();
+    }
+
+    public double getKcal() {
+        double out = 0;
+        for (IngredientQty i : ingredients)
+            out += i.getTotKcal();
+        return out;
     }
 
     @Override

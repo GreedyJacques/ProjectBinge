@@ -92,8 +92,8 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
         recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        recipeTable.getColumnModel().getColumn(3).setPreferredWidth(250);
-        recipeTable.getColumnModel().getColumn(4).setPreferredWidth(250);
+        recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+        recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
 
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Ricette"));
@@ -118,7 +118,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
                 if (!selectionModel.isSelectionEmpty()) {
                     int row = recipeTable.getSelectedRow();
                     Object selectedId = recipeTable.getValueAt(row, 0);
-                    selectedRecipe = Recipe.findRecipe(recipeList,(int)selectedId);
+                    selectedRecipe = Recipe.findRecipe(recipeList, (int) selectedId);
                 }
             }
         });
@@ -138,7 +138,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
         if (e.getSource() == addButton) {
             Recipe newRecipe = new Recipe(Recipe.getMaxId(recipeList) + 1);
-            new RecipeDetailPanel(newRecipe);
+            new RecipeDetailPanel(newRecipe,true, recipeList, recipeTable);
             //TODO
         }
 
@@ -147,7 +147,10 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         if (e.getSource() == openButton) {
-            new RecipeDetailPanel(selectedRecipe);
+            if (selectedRecipe != null)
+                new RecipeDetailPanel(selectedRecipe,false, recipeList, recipeTable);
+            else
+                return;
         }
     }
 
