@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
@@ -55,10 +56,25 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         Object[][] recipeMatrix = Recipe.toMatrix(testRecipeList);
 
 
-        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "Tempo Preparazione", "Tempo Cottura"});
+        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "T. Preparazione", "T. Cottura"});
 
         JTable recipeTable = new JTable(recipeModel);
         JScrollPane scrollPanel = new JScrollPane(recipeTable);
+
+        recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        recipeTable.getColumnModel().getColumn(0).setMaxWidth(150);
+        recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
+        recipeTable.getColumnModel().getColumn(1).setMaxWidth(1500);
+        recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        recipeTable.getColumnModel().getColumn(2).setMaxWidth(150);
+        recipeTable.getColumnModel().getColumn(3).setPreferredWidth(250);
+        recipeTable.getColumnModel().getColumn(3).setMaxWidth(250);
+        recipeTable.getColumnModel().getColumn(4).setPreferredWidth(250);
+        recipeTable.getColumnModel().getColumn(4).setMaxWidth(250);
+
+
+
+
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Ricette"));
 
         add(new JLabel("Cerca:"), "right");
