@@ -48,5 +48,9 @@ public class LaunchPanel extends JFrame implements ActionListener {
 
 
 
+    public static int media(int a, int b)
+    {
+        return (a+b)/2;
+    }
 
 }

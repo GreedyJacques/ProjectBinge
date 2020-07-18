@@ -25,6 +25,12 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
     private JTextField searchBar;
 
+    private ArrayList<Recipe> recipeList;
+
+    JTable recipeTable;
+
+    Recipe selectedRecipe;
+
     public RecipePanel() {
         super(new MigLayout("fill, wrap 3", "50[][grow,fill]20[]", "50[][]20[grow,fill][]150[][][]50"));
 
@@ -42,37 +48,52 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         filterButton.setPreferredSize(new Dimension(75, 30));
         searchButton.setPreferredSize(new Dimension(75, 30));
 
+        openButton.addActionListener(this);
+        addButton.addActionListener(this);
         searchButton.addActionListener(this);
         searchBar.addKeyListener(this);
 
         /*Test recipe list*/
-        ArrayList<Recipe> testRecipeList = new ArrayList<>();
+        recipeList = new ArrayList<>();
 
-        testRecipeList.add(new Recipe());
-        testRecipeList.add(new Recipe(5));
-        testRecipeList.add(new Recipe());
+        Recipe a = new Recipe();
+        a.setId(25);
+        a.setName("Lasagna");
+        a.setProcedure("In realta non so come si fanno");
+
+        Recipe b = new Recipe();
+        b.setId(10);
+        b.setName("Pizza");
+        b.setProcedure("Questa la sa fare Laura");
+
+        for (int i = 0; i < 1000; ++i)
+            recipeList.add(new Recipe());
+
+        recipeList.add(a);
+        recipeList.add(b);
+
+
         /*end test*/
 
-        Object[][] recipeMatrix = Recipe.toMatrix(testRecipeList);
+
+        Object[][] recipeMatrix = Recipe.toMatrix(recipeList);
 
 
-        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "T. Preparazione", "T. Cottura"});
+        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "T. Preparazione", "T. Cottura"}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        JTable recipeTable = new JTable(recipeModel);
+        recipeTable = new JTable(recipeModel);
         JScrollPane scrollPanel = new JScrollPane(recipeTable);
 
         recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-        recipeTable.getColumnModel().getColumn(0).setMaxWidth(150);
         recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
-        recipeTable.getColumnModel().getColumn(1).setMaxWidth(1500);
         recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        recipeTable.getColumnModel().getColumn(2).setMaxWidth(150);
         recipeTable.getColumnModel().getColumn(3).setPreferredWidth(250);
-        recipeTable.getColumnModel().getColumn(3).setMaxWidth(250);
         recipeTable.getColumnModel().getColumn(4).setPreferredWidth(250);
-        recipeTable.getColumnModel().getColumn(4).setMaxWidth(250);
-
-
 
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Ricette"));
@@ -96,8 +117,8 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
             public void valueChanged(ListSelectionEvent e) {
                 if (!selectionModel.isSelectionEmpty()) {
                     int row = recipeTable.getSelectedRow();
-                    Object selectedrecipe = recipeTable.getValueAt(row, 0);
-                    JOptionPane.showMessageDialog(null, "Selected ID " + selectedrecipe);
+                    Object selectedId = recipeTable.getValueAt(row, 0);
+                    selectedRecipe = Recipe.findRecipe(recipeList,(int)selectedId);
                 }
             }
         });
@@ -109,6 +130,24 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         if (e.getSource() == searchButton) {
             String searchedThing = searchBar.getText();
             JOptionPane.showMessageDialog(null, "you searched for: " + searchedThing);
+        }
+
+        if (e.getSource() == filterButton) {
+        }
+
+
+        if (e.getSource() == addButton) {
+            Recipe newRecipe = new Recipe(Recipe.getMaxId(recipeList) + 1);
+            new RecipeDetailPanel(newRecipe);
+            //TODO
+        }
+
+
+        if (e.getSource() == removeButton) {
+        }
+
+        if (e.getSource() == openButton) {
+            new RecipeDetailPanel(selectedRecipe);
         }
     }
 

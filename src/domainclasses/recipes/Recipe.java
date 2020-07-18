@@ -11,7 +11,7 @@ public class Recipe {
     int cooktime;
 
     public Recipe() {
-        this.id = -1; //TODO
+        this.id = -1;
         this.name = "New Recipe";
         this.ingredients = new ArrayList<IngredientQty>();
         this.procedure = "Procedure goes here";
@@ -19,8 +19,8 @@ public class Recipe {
         this.cooktime = 0;
     }
 
-    public Recipe(int ID) {
-        this.id = ID; //TODO
+    public Recipe(int id) {
+        this.id = id;
         this.name = "New Recipe";
         this.ingredients = new ArrayList<IngredientQty>();
         this.procedure = "Procedure goes here";
@@ -76,7 +76,7 @@ public class Recipe {
         this.cooktime = cooktime;
     }
 
-    public static Object[][] toMatrix(ArrayList<Recipe> recipes){
+    public static Object[][] toMatrix(ArrayList<Recipe> recipes) {
         Object[][] out = new Object[recipes.size()][5];
 
         for (int i = 0; i < recipes.size(); ++i) {
@@ -88,6 +88,25 @@ public class Recipe {
         }
 
         return out;
+    }
+
+    public static int getMaxId(ArrayList<Recipe> recipes) {
+        int out = 0;
+
+        for (Recipe r : recipes) {
+            if (r.getId() > out)
+                out = r.getId();
+        }
+
+        return out;
+    }
+
+    public static Recipe findRecipe(ArrayList<Recipe> recipes, int id){
+        for(Recipe r : recipes){
+            if(r.getId() == id)
+                return r;
+        }
+        return new Recipe();
     }
 
     @Override

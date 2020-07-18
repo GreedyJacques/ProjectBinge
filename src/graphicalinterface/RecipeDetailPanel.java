@@ -1,17 +1,21 @@
 package graphicalinterface;
 
+import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.DefaultStyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Enumeration;
 
 public class RecipeDetailPanel extends JFrame implements ActionListener {
     private JButton  removeButton, modifyButton;
 
-    public RecipeDetailPanel(String title){
-        super(title);
+    public RecipeDetailPanel(Recipe recipe){
+        super(recipe.getName());
         JPanel mainpanel = new JPanel(new MigLayout("fill, wrap 3", "50[grow,fill]20[grow,fill]20[]","50[][][]50"));
 
 
@@ -30,7 +34,7 @@ public class RecipeDetailPanel extends JFrame implements ActionListener {
 
 
         mainpanel.add(new JTextPane(),"span 1 3, grow");
-        mainpanel.add(new JTextPane(),"span 1 3, grow");
+        mainpanel.add(new JTextArea(recipe.getProcedure()),"span 1 3, grow");
         mainpanel.add(new JLabel(""));
 
         mainpanel.add(removeButton,"right");
@@ -38,10 +42,8 @@ public class RecipeDetailPanel extends JFrame implements ActionListener {
 
         /* JFrame methods called */
         setContentPane(mainpanel);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocation(400, 230);
-        setSize(1280, 720);
-        setMinimumSize(new Dimension(1280,720));
+        setSize(500, 500);
         setVisible(true);
     }
 
