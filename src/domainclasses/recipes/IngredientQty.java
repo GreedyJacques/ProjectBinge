@@ -41,6 +41,14 @@ public class IngredientQty extends Ingredient {
         return out;
     }
 
+    public static IngredientQty findIngredient(ArrayList<IngredientQty> ingredients, int id) {
+        for (IngredientQty r : ingredients) {
+            if (r.getId() == id)
+                return r;
+        }
+        return new IngredientQty();
+    }
+
     @Override
     public String toString() {
         return "IngredientQty{" +

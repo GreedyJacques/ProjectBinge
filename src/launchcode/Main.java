@@ -6,19 +6,22 @@ import graphicalinterface.*;
 import java.util.ArrayList;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         Ingredient a = new Ingredient();
-        Ingredient b = new Ingredient("Nutella",1,5);
+        Ingredient b = new Ingredient("Nutella", 1, 5);
 
 
         IngredientQty c = new IngredientQty();
-        IngredientQty d = new IngredientQty(b,500);
+        IngredientQty d = new IngredientQty(b, 500);
 
         Recipe e = new Recipe();
 
+        String s = "200 grammi";
 
+        int i = strtoint(s);
 
+        System.out.println(i);
         System.out.println(a);
         System.out.println(b);
         System.out.println(c);
@@ -28,5 +31,17 @@ public class Main {
         new MainFrame();
     }
 
+    public static int strtoint(String s) {
+        int out = 0;
+        int i = 0;
+        char c = s.charAt(i);
+        while (c >= '0' && c <= '9') {
+            out *= 10;
+            out += c - '0';
+            i++;
+            c = s.charAt(i);
+        }
+        return out;
+    }
 
 }

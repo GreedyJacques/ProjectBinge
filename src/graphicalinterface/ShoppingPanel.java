@@ -22,7 +22,7 @@ public class ShoppingPanel extends JPanel implements ActionListener {
 
     DefaultTableModel ingredientQtyModel;
 
-    int selectedQty;
+    String selectedQty;
     Object selectedIngredient;
 
     JTable ingredientQtyTable;
@@ -89,8 +89,8 @@ public class ShoppingPanel extends JPanel implements ActionListener {
                 if (!selectionModel.isSelectionEmpty()) {
                     int row = ingredientQtyTable.getSelectedRow();
                     selectedIngredient = ingredientQtyModel.getValueAt(row, 1);
-                    selectedQty = (int) ingredientQtyModel.getValueAt(row, 2);
-                    JOptionPane.showMessageDialog(null, "there are " + selectedQty + " " + selectedIngredient + " on the shopping list");
+                    selectedQty = (String) ingredientQtyModel.getValueAt(row, 2);
+                    JOptionPane.showMessageDialog(null, "there are " + selectedQty + " of " + selectedIngredient + " on the shopping list");
                 }
             }
         });
@@ -114,6 +114,13 @@ public class ShoppingPanel extends JPanel implements ActionListener {
 
         }
         if (e.getSource() == removeButton) {
+            if (selectedIngredient != null) {
+                int row = ingredientQtyTable.getSelectedRow();
+                int selectedId = (int) ingredientQtyTable.getValueAt(row, 0);
+                ingredientQtyList.remove(IngredientQty.findIngredient(ingredientQtyList, (int) selectedId));
+                ingredientQtyModel.removeRow(row);
+            } else
+                return;
 
         }
         if (e.getSource() == modifyButton) {
