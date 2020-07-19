@@ -14,9 +14,21 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 public class RecipeDetailPanel extends JFrame implements ActionListener {
-    private JButton removeButton, modifyButton, acceptButton, cancelButton;
+    private JButton acceptButton, cancelButton;
 
-    private JLabel procedureUnmodifiable;
+    private JLabel nameUnmodifiable; //1
+    private JPanel portionsUnmodifiable; //3
+    private JScrollPane ingredientsUnmodifiable; //4
+    private JTable ingredientsTableUnmodifiable; //4
+    private JScrollPane procedureUnmodifiable; //5
+    private JTextArea procedureTextUnmodifiable; //5
+    private JButton addShoppingButton; //8
+    private JButton modifyButton; //9
+    private JButton removeButton; //10
+    private JLabel kcalUnmodifiable; //11
+    private JLabel prepUnmodifiable; //12
+    private JLabel cookUnmodifiable; //13
+
     private JTextArea procedureModifiable;
 
     private JPanel mainpanelModifiable, mainpanelUnmodifiable;
@@ -33,39 +45,59 @@ public class RecipeDetailPanel extends JFrame implements ActionListener {
         this.recipeList = recipeList;
         this.recipeTable = recipeTable;
 
-        mainpanelUnmodifiable = new JPanel(new MigLayout("fill, wrap 3", "50[grow,fill]20[grow,fill]20[]", "50[][][]50"));
+        mainpanelUnmodifiable = new JPanel(new MigLayout("fill, wrap 4", "[grow,fill][grow,fill][grow,fill][]", "[][][grow,fill][][][][]"));
         mainpanelModifiable = new JPanel(new MigLayout("fill, wrap 3", "50[grow,fill]20[grow,fill]20[]", "50[][][]50"));
 
+        Object[][] ingredientMatrix = new Object[recipe.getIngredients().size()][3];
 
-        removeButton = new JButton("RIMUOVI");
-        modifyButton = new JButton("MODIFICA");
-        acceptButton = new JButton("ACCETTA");
-        cancelButton = new JButton("ANNULLA");
-        procedureUnmodifiable = new JLabel(recipe.getProcedure());
-        procedureModifiable = new JTextArea(recipe.getProcedure());
+        DefaultTableModel ingredientModel = new DefaultTableModel(ingredientMatrix, new String[]{"Nome", "Qta", "kCal"}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        ingredientsTableUnmodifiable = new JTable(ingredientModel);
+
+        ingredientsTableUnmodifiable.getColumnModel().getColumn(0).setPreferredWidth(5);
+        ingredientsTableUnmodifiable.getColumnModel().getColumn(1).setPreferredWidth(5);
+        ingredientsTableUnmodifiable.getColumnModel().getColumn(2).setPreferredWidth(5);
+
+
+        nameUnmodifiable = new JLabel(recipe.getName()); //1
+        portionsUnmodifiable = new JPanel(new GridLayout(1,3)); //3
+        ingredientsUnmodifiable = new JScrollPane(ingredientsTableUnmodifiable); //4
+        procedureTextUnmodifiable = new JTextArea(recipe.getProcedure()); //5
+        procedureUnmodifiable = new JScrollPane(procedureTextUnmodifiable); //5
+        addShoppingButton = new JButton("AGGIUNGI A SPESA"); //8
+        modifyButton = new JButton("MODIFICA"); //9
+        removeButton = new JButton("RIMUOVI"); //10
+        kcalUnmodifiable = new JLabel("kCal totali: " + recipe.getKcal()); //11
+        prepUnmodifiable = new JLabel("T. Preparazione: " + recipe.getPreptime()); //12
+        cookUnmodifiable = new JLabel("T. Cottura: " + recipe.getCooktime()); //13
 
         removeButton.addActionListener(this);
         modifyButton.addActionListener(this);
-        acceptButton.addActionListener(this);
-        cancelButton.addActionListener(this);
 
+        addShoppingButton.setPreferredSize(new Dimension(175, 50));
         removeButton.setPreferredSize(new Dimension(175, 50));
         modifyButton.setPreferredSize(new Dimension(175, 50));
-        acceptButton.setPreferredSize(new Dimension(175, 50));
-        cancelButton.setPreferredSize(new Dimension(175, 50));
 
+        mainpanelUnmodifiable.add(nameUnmodifiable, "span 3 1, grow");
+        mainpanelUnmodifiable.add(new JLabel("2"), "wrap");
+        mainpanelUnmodifiable.add(portionsUnmodifiable, "span 3 1");
+        mainpanelUnmodifiable.add(new JLabel("4"), "wrap");
+        mainpanelUnmodifiable.add(ingredientsUnmodifiable, "span 1 4, grow");
+        mainpanelUnmodifiable.add(procedureUnmodifiable, "span 2 4, grow");
+        mainpanelUnmodifiable.add(new JLabel("7"), "wrap");
+        mainpanelUnmodifiable.add(addShoppingButton, "wrap");
+        mainpanelUnmodifiable.add(modifyButton, "wrap");
+        mainpanelUnmodifiable.add(removeButton, "wrap");
+        mainpanelUnmodifiable.add(kcalUnmodifiable);
+        mainpanelUnmodifiable.add(prepUnmodifiable);
+        mainpanelUnmodifiable.add(cookUnmodifiable);
+        mainpanelUnmodifiable.add(new JLabel("14"));
 
-        mainpanelUnmodifiable.add(new JTextPane(), "span 1 3, grow");
-        mainpanelUnmodifiable.add(procedureUnmodifiable, "span 1 3, grow");
-        mainpanelUnmodifiable.add(new JLabel(""));
-        mainpanelUnmodifiable.add(removeButton, "right");
-        mainpanelUnmodifiable.add(modifyButton, "right");
-
-        mainpanelModifiable.add(new JTextPane(), "span 1 3, grow");
-        mainpanelModifiable.add(procedureModifiable, "span 1 3, grow");
-        mainpanelModifiable.add(new JLabel(""));
-        mainpanelModifiable.add(acceptButton, "right");
-        mainpanelModifiable.add(cancelButton, "right");
 
         /* JFrame methods called */
         if (newrecipe)
@@ -89,8 +121,8 @@ public class RecipeDetailPanel extends JFrame implements ActionListener {
         if (e.getSource() == acceptButton) {
             setContentPane(mainpanelUnmodifiable);
             recipe.setProcedure(procedureModifiable.getText());
-            procedureUnmodifiable.setText(recipe.getProcedure());
-            if(newrecipe)
+            procedureTextUnmodifiable.setText(recipe.getProcedure());
+            if (newrecipe)
                 recipeList.add(recipe);
 
             Object[][] recipeMatrix = Recipe.toMatrix(recipeList);
