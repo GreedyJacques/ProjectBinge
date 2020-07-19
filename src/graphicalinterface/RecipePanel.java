@@ -2,7 +2,6 @@ package graphicalinterface;
 
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -31,6 +30,8 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
     Recipe selectedRecipe;
 
+    DefaultTableModel recipeModel;
+
     public RecipePanel() {
         super(new MigLayout("fill, wrap 3", "50[][grow,fill]20[]", "50[][]20[grow,fill][]150[][][]50"));
 
@@ -48,6 +49,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         filterButton.setPreferredSize(new Dimension(75, 30));
         searchButton.setPreferredSize(new Dimension(75, 30));
 
+        removeButton.addActionListener(this);
         openButton.addActionListener(this);
         addButton.addActionListener(this);
         searchButton.addActionListener(this);
@@ -79,7 +81,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         Object[][] recipeMatrix = Recipe.toMatrix(recipeList);
 
 
-        DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "T. Preparazione", "T. Cottura"}) {
+        recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "T. Preparazione", "T. Cottura"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -138,17 +140,24 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
         if (e.getSource() == addButton) {
             Recipe newRecipe = new Recipe(Recipe.getMaxId(recipeList) + 1);
-            new RecipeDetailPanel(newRecipe,true, recipeList, recipeTable);
+            new RecipeDetailPanel(newRecipe, true, recipeList, recipeTable);
             //TODO
         }
 
 
         if (e.getSource() == removeButton) {
+            if (selectedRecipe != null) {
+                int row = recipeTable.getSelectedRow();
+                Object selectedId = recipeTable.getValueAt(row, 0);
+                recipeList.remove(Recipe.findRecipe(recipeList, (int) selectedId));
+                recipeModel.removeRow(row);
+            } else
+                return;
         }
 
         if (e.getSource() == openButton) {
             if (selectedRecipe != null)
-                new RecipeDetailPanel(selectedRecipe,false, recipeList, recipeTable);
+                new RecipeDetailPanel(selectedRecipe, false, recipeList, recipeTable);
             else
                 return;
         }
