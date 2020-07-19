@@ -1,21 +1,35 @@
 package graphicalinterface;
 
+import domainclasses.recipes.IngredientQty;
+import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class ShoppingPanel extends JPanel implements ActionListener {
     private JButton addButton, removeButton,
             modifyButton, addFromRecipeButton;
 
-    public ShoppingPanel(){
+    private ArrayList<IngredientQty> ingredientQtyList;
+
+    DefaultTableModel ingredientQtyModel;
+
+    int selectedQty;
+    Object selectedIngredient;
+
+    JTable ingredientQtyTable;
+
+    public ShoppingPanel() {
 
 
-
-        super(new MigLayout("fill, wrap 2", "50[grow,fill]20[]","50[grow, fill][][][][]50"));
+        super(new MigLayout("fill, wrap 2", "50[grow,fill]20[]", "50[grow, fill][][][][]50"));
 
 
         addButton = new JButton("AGGIUNGI");
@@ -28,31 +42,76 @@ public class ShoppingPanel extends JPanel implements ActionListener {
         modifyButton.addActionListener(this);
         addFromRecipeButton.addActionListener(this);
 
-        addButton.setPreferredSize(new Dimension(175,50));
-        removeButton.setPreferredSize(new Dimension(175,50));
-        modifyButton.setPreferredSize(new Dimension(175,50));
-        addFromRecipeButton.setPreferredSize(new Dimension(175,50));
+        //TEST
+        ingredientQtyList = new ArrayList<>();
+        IngredientQty a = new IngredientQty();
+        a.setQty(2);
 
-        add(new JTextPane(),"span 1 5, grow");
+        IngredientQty b = new IngredientQty();
+        b.setQty(6);
+
+        ingredientQtyList.add(a);
+        ingredientQtyList.add(b);
+        //END TEST
+
+
+        Object[][] ingredientQtyMatrix = IngredientQty.toMatrix(ingredientQtyList);
+
+        ingredientQtyModel = new DefaultTableModel(ingredientQtyMatrix, new String[]{"ID", "Nome", "Qty"}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        ingredientQtyTable = new JTable(ingredientQtyModel);
+        JScrollPane scrollPanel = new JScrollPane(ingredientQtyTable);
+
+
+        ingredientQtyTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        ingredientQtyTable.getColumnModel().getColumn(1).setPreferredWidth(750);
+        ingredientQtyTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+
+        scrollPanel.setBorder(BorderFactory.createTitledBorder("Lista Spesa"));
+
+        ListSelectionModel selectionModel = ingredientQtyTable.getSelectionModel();
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!selectionModel.isSelectionEmpty()) {
+                    int row = ingredientQtyTable.getSelectedRow();
+                    selectedIngredient = ingredientQtyModel.getValueAt(row, 1);
+                    selectedQty = (int) ingredientQtyModel.getValueAt(row, 2);
+                    JOptionPane.showMessageDialog(null, "there are " + selectedQty + " " + selectedIngredient + " on the shopping list");
+                }
+            }
+        });
+
+        addButton.setPreferredSize(new Dimension(175, 50));
+        removeButton.setPreferredSize(new Dimension(175, 50));
+        modifyButton.setPreferredSize(new Dimension(175, 50));
+        addFromRecipeButton.setPreferredSize(new Dimension(175, 50));
+
+        add(scrollPanel, "span 1 5, grow");
         add(new JLabel(""));
-        add(addButton,"right");
+        add(addButton, "right");
         add(addFromRecipeButton, "right");
-        add(removeButton,"right");
-        add(modifyButton,"right");
+        add(removeButton, "right");
+        add(modifyButton, "right");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()== addButton){
+        if (e.getSource() == addButton) {
 
         }
-        if(e.getSource()== removeButton){
+        if (e.getSource() == removeButton) {
 
         }
-        if(e.getSource()== modifyButton){
+        if (e.getSource() == modifyButton) {
 
         }
-        if(e.getSource()== addFromRecipeButton){
+        if (e.getSource() == addFromRecipeButton) {
 
         }
 
