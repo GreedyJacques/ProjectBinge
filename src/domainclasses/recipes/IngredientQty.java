@@ -26,6 +26,7 @@ public class IngredientQty extends Ingredient {
     public double getTotKcal() {
         return qty * kcal;
     }
+
     public static Object[][] toMatrix(ArrayList<IngredientQty> ingredients) {
         Object[][] out = new Object[ingredients.size()][5];
 
@@ -34,12 +35,11 @@ public class IngredientQty extends Ingredient {
             out[i][1] = ingredients.get(i).getName();
             out[i][2] = ingredients.get(i).getQty();
             out[i][3] = ingredients.get(i).getKcal();
-            out[i][4] = ingredients .get(i).getType();
+            out[i][4] = ingredients.get(i).getType();
         }
 
         return out;
     }
-
 
     @Override
     public String toString() {
