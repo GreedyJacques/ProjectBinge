@@ -33,7 +33,7 @@ public class IngredientQty extends Ingredient {
         for (int i = 0; i < ingredients.size(); ++i) {
             out[i][0] = ingredients.get(i).getId();
             out[i][1] = ingredients.get(i).getName();
-            out[i][2] = ingredients.get(i).getQty();
+            out[i][2] = ingredients.get(i).getQty() + " " + ingredients.get(i).stringType();
             out[i][3] = ingredients.get(i).getKcal();
             out[i][4] = ingredients.get(i).getType();
         }

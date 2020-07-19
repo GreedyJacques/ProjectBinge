@@ -1,5 +1,6 @@
 package graphicalinterface;
 
+import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
@@ -50,8 +51,12 @@ public class ShoppingPanel extends JPanel implements ActionListener {
         IngredientQty b = new IngredientQty();
         b.setQty(6);
 
+        Ingredient c = new Ingredient("Nutella",1,5);
+        IngredientQty c1=new IngredientQty(c,300);
+
         ingredientQtyList.add(a);
         ingredientQtyList.add(b);
+        ingredientQtyList.add(c1);
         //END TEST
 
 
@@ -60,7 +65,10 @@ public class ShoppingPanel extends JPanel implements ActionListener {
         ingredientQtyModel = new DefaultTableModel(ingredientQtyMatrix, new String[]{"ID", "Nome", "Qty"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                if (column == 0 || column == 1)
+                    return false;
+                else
+                    return true;
             }
         };
 
