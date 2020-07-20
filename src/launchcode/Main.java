@@ -3,6 +3,7 @@ package launchcode;
 import domainclasses.recipes.*;
 import graphicalinterface.*;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class Main {

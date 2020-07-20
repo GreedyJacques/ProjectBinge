@@ -2,6 +2,7 @@ package graphicalinterface;
 
 import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
+import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -108,5 +109,37 @@ public class InventoryPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+        if(e.getSource()==addButton){
+            Object[] options = {"nuovo ingrediente", "ingrediente presente"};
+            int n = JOptionPane.showOptionDialog(null,"cosa vuoi aggiungere?","AGGIUNGI",JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,null,options,options[0]);
+
+            if (n==0){
+                JOptionPane.showMessageDialog(null,"hai scelto nuovo ingrediente");
+                int newIngredientID = (IngredientQty.getMaxId(ingredientQtyList)) + 1;
+                Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, 0);
+                IngredientQty newIngredientQty = new IngredientQty(newIngredient,0);
+                new NewIngredientPanel(newIngredientQty,ingredientQtyList,ingredientQtyTable);
+
+
+
+            }
+            else if(n==1){
+                JOptionPane.showMessageDialog(null,"hai scelto ingrediente presente");
+
+
+        }
+
+        if (e.getSource() == removeButton) {
+            if (selectedIngredient != null) {
+                int row = ingredientQtyTable.getSelectedRow();
+                int selectedId = (int) ingredientQtyTable.getValueAt(row, 0);
+                ingredientQtyList.remove(IngredientQty.findIngredient(ingredientQtyList, (int) selectedId));
+                ingredientQtyModel.removeRow(row);
+            } else
+                return;
+
+        }
+
     }
-}
+}}

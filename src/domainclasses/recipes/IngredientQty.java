@@ -49,6 +49,18 @@ public class IngredientQty extends Ingredient {
         return new IngredientQty();
     }
 
+    public static int getMaxId(ArrayList<IngredientQty> ingredients) {
+        int out = 0;
+
+        for (IngredientQty r : ingredients) {
+            if (r.getId() > out)
+                out = r.getId();
+        }
+
+        return out;
+    }
+
+
     @Override
     public String toString() {
         return "IngredientQty{" +
