@@ -82,7 +82,10 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == addButton) {
-            newIngredientQty.setName(ingredientName.getText());
+            if (ingredientName.getText().equals(""))
+                JOptionPane.showMessageDialog(null, "Inserisci il nome");
+            else
+                newIngredientQty.setName(ingredientName.getText());
 
             if (mlButton.isSelected())
                 newIngredientQty.setType(1);
@@ -105,26 +108,14 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Inserisci le calorie per " + newIngredientQty.stringType());
             }
 
-            if (!newIngredientQty.getName().equals("") && newIngredientQty.getType() != 0 && newIngredientQty.getTotKcal() != 0) {
+            if (!newIngredientQty.getName().equals("") && newIngredientQty.getType() != 0 && newIngredientQty.getQty() >= 0 && newIngredientQty.getKcal() >= 0) {
                 ingredientQtylist.add(newIngredientQty);
 
-                Object[][] ingredientQtyMatrix = IngredientQty.toMatrix(ingredientQtylist);
+                Object[] newIngredientQtyRow = {newIngredientQty.getId(),newIngredientQty.getName(),newIngredientQty.getQty() + " " + newIngredientQty.stringType(), newIngredientQty.getKcal(), newIngredientQty.getType()};
 
-                DefaultTableModel ingredientQtyModel = new DefaultTableModel(ingredientQtyMatrix, new String[]{"ID", "Nome", "Qty"}) {
-                    @Override
-                    public boolean isCellEditable(int row, int column) {
-                        if (column == 0 || column == 1)
-                            return false;
-                        else
-                            return true;
-                    }
-                };
+                DefaultTableModel model = (DefaultTableModel) ingredientQtyTable.getModel();
 
-                ingredientQtyTable.setModel(ingredientQtyModel);
-
-                ingredientQtyTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-                ingredientQtyTable.getColumnModel().getColumn(1).setPreferredWidth(750);
-                ingredientQtyTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+                model.addRow(newIngredientQtyRow);
 
                 dispose();
             }

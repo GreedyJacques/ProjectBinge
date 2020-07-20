@@ -117,7 +117,7 @@ public class InventoryPanel extends JPanel implements ActionListener {
             if (n==0){
                 JOptionPane.showMessageDialog(null,"hai scelto nuovo ingrediente");
                 int newIngredientID = (IngredientQty.getMaxId(ingredientQtyList)) + 1;
-                Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, 0);
+                Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, -1);
                 IngredientQty newIngredientQty = new IngredientQty(newIngredient,0);
                 new NewIngredientPanel(newIngredientQty,ingredientQtyList,ingredientQtyTable);
 
