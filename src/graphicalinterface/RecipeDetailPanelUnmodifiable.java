@@ -28,12 +28,11 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
     private JLabel cookUnmodifiable; //13
 
     private Recipe recipe;
-    private ArrayList<IngredientQty> ingredientListNew;
     private ArrayList<Recipe> recipeList;
     private JTable recipeTable;
-    private RecipeDetailPanel callerFrame;
+    private RecipeDetailFrame callerFrame;
 
-    public RecipeDetailPanelUnmodifiable(Recipe recipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailPanel callerFrame) {
+    public RecipeDetailPanelUnmodifiable(Recipe recipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame) {
         super(new MigLayout("fill, wrap 4", "[grow,fill][200,grow,fill][300,grow,fill][]", "[][][grow,fill][][][][]"));
         this.recipe = recipe;
         this.recipeList = recipeList;

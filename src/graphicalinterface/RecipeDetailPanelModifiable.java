@@ -33,9 +33,9 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
     private ArrayList<IngredientQty> ingredientListNew;
     private ArrayList<Recipe> recipeList;
     private JTable recipeTable;
-    private RecipeDetailPanel callerFrame;
+    private RecipeDetailFrame callerFrame;
 
-    public RecipeDetailPanelModifiable(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailPanel callerFrame) {
+    public RecipeDetailPanelModifiable(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame) {
         super(new MigLayout("fill, wrap 5", "[grow,fill][grow,fill][200,grow,fill][300,grow,fill][]", "[][][grow,fill][][][]"));
         this.recipe = recipe;
         this.newrecipe = newrecipe;

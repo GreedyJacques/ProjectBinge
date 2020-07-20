@@ -140,7 +140,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
         if (e.getSource() == addButton) {
             Recipe newRecipe = new Recipe(Recipe.getMaxId(recipeList) + 1);
-            new RecipeDetailPanel(newRecipe, true, recipeList, recipeTable);
+            new RecipeDetailFrame(newRecipe, true, recipeList, recipeTable);
             //TODO
         }
 
@@ -157,7 +157,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
         if (e.getSource() == openButton) {
             if (selectedRecipe != null)
-                new RecipeDetailPanel(selectedRecipe, false, recipeList, recipeTable);
+                new RecipeDetailFrame(selectedRecipe, false, recipeList, recipeTable);
             else
                 return;
         }
