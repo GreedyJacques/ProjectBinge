@@ -1,5 +1,7 @@
 package domainclasses.recipes;
 
+import java.util.ArrayList;
+
 public class Ingredient {
     int id;
     String name;
@@ -85,7 +87,26 @@ public class Ingredient {
             return "pz.";
         else
             return "???";
-    };
+    }
+
+    public static int getMaxId(ArrayList<? extends Ingredient> ingredients) {
+        int out = 0;
+
+        for (Ingredient r : ingredients) {
+            if (r.getId() > out)
+                out = r.getId();
+        }
+
+        return out;
+    }
+
+    public static Ingredient findIngredient(ArrayList<Ingredient> ingredients, int id) {
+        for (Ingredient r : ingredients) {
+            if (r.getId() == id)
+                return r;
+        }
+        return new IngredientQty();
+    }
 
     /*To Here*/
 

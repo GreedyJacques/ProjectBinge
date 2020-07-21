@@ -93,10 +93,7 @@ public class InventoryPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == addButton) {
-            int newIngredientID = (IngredientQty.getMaxId(inventoryList)) + 1;
-            Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, -1);
-            IngredientQty newIngredientQty = new IngredientQty(newIngredient, 0);
-            new ExistingIngredientPanel(newIngredientQty, inventoryList, inventoryTable, ingredientList);
+            new ExistingIngredientPanel(inventoryList, inventoryTable, ingredientList);
 
             }
 
@@ -104,7 +101,7 @@ public class InventoryPanel extends JPanel implements ActionListener {
                 if (selectedIngredient != null) {
                     int row = inventoryTable.getSelectedRow();
                     int selectedId = (int) inventoryTable.getValueAt(row, 0);
-                    inventoryList.remove(IngredientQty.findIngredient(inventoryList, (int) selectedId));
+                    inventoryList.remove(IngredientQty.findIngredientQty(inventoryList, (int) selectedId));
                     inventoryModel.removeRow(row);
                 } else
                     return;

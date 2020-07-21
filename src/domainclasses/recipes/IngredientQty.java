@@ -41,25 +41,13 @@ public class IngredientQty extends Ingredient {
         return out;
     }
 
-    public static IngredientQty findIngredient(ArrayList<IngredientQty> ingredients, int id) {
+    public static IngredientQty findIngredientQty(ArrayList<IngredientQty> ingredients, int id) {
         for (IngredientQty r : ingredients) {
             if (r.getId() == id)
                 return r;
         }
         return new IngredientQty();
     }
-
-    public static int getMaxId(ArrayList<IngredientQty> ingredients) {
-        int out = 0;
-
-        for (IngredientQty r : ingredients) {
-            if (r.getId() > out)
-                out = r.getId();
-        }
-
-        return out;
-    }
-
 
     @Override
     public String toString() {

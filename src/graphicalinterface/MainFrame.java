@@ -53,6 +53,23 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
         recipeList.add(br);
         /*end test*/
 
+        //Test ingredients list
+        ingredientList = new ArrayList<>();
+
+        Ingredient aing = new Ingredient();
+        Ingredient bing = new Ingredient(1,"Nutella", 2, 5);
+        Ingredient cing = new Ingredient(2,"Pane",2,3);
+        Ingredient ding = new Ingredient(3,"Burro", 2, 7);
+        Ingredient eing = new Ingredient(4,"Mele", 3,20);
+
+        ingredientList.add(aing);
+        ingredientList.add(bing);
+        ingredientList.add(cing);
+        ingredientList.add(ding);
+        ingredientList.add(eing);
+
+        //END Test
+
         //TEST Shopping
         shoppingList = new ArrayList<>();
         IngredientQty as = new IngredientQty();

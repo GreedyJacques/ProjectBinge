@@ -102,7 +102,7 @@ public class ShoppingPanel extends JPanel implements ActionListener {
             if (selectedIngredient != null) {
                 int row = shoppingTable.getSelectedRow();
                 int selectedId = (int) shoppingTable.getValueAt(row, 0);
-                shoppingList.remove(IngredientQty.findIngredient(shoppingList, (int) selectedId));
+                shoppingList.remove(IngredientQty.findIngredientQty(shoppingList, (int) selectedId));
                 shoppingModel.removeRow(row);
             } else
                 return;
