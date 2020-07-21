@@ -15,7 +15,7 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
 
     private JPanel mainpanel;
 
-    private JButton newButton;
+    private JButton newButton,addButton;
 
     private JTextField ingredientName, ingredientQty;
 
@@ -33,20 +33,25 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
         this.ingredientQtyTable = ingredientQtyTable;
         this.ingredientList = ingredientList;
 
-        mainpanel = new JPanel(new MigLayout("fill, wrap 1", "[grow, fill]", "20[][][][][][][]"));
+        mainpanel = new JPanel(new MigLayout("fill, wrap 1", "[grow, fill][]", "20[][][][][][][][]"));
         newButton = new JButton("NUOVO");
+        addButton = new JButton("AGGIUNGI");
 
 
 
 
-        newButton.setPreferredSize(new Dimension(175, 50));
+
+        newButton.setPreferredSize(new Dimension(50, 50));
+        addButton.setPreferredSize(new Dimension(50, 50) );
 
         newButton.addActionListener(this);
+        addButton.addActionListener(this);
 
         ingredientName = new JTextField();
         ingredientQty = new JTextField();
 
-        mainpanel.add(newButton,"top right");
+
+        mainpanel.add(newButton,"left");
         mainpanel.add(new JLabel("nome:"));
         mainpanel.add(ingredientName, "");
         mainpanel.add(new JLabel("Tipo:"));
@@ -55,6 +60,8 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
         mainpanel.add(new JLabel("") );
         mainpanel.add(new JLabel("Quantità:"));
         mainpanel.add(ingredientQty, "");
+        mainpanel.add(addButton,"top right");
+
 
         setContentPane(mainpanel);
         setLocation(400, 230);
