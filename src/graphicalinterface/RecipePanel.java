@@ -1,5 +1,7 @@
 package graphicalinterface;
 
+import domainclasses.recipes.Ingredient;
+import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
@@ -24,16 +26,22 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
     private JTextField searchBar;
 
-    private ArrayList<Recipe> recipeList;
-
     JTable recipeTable;
+    DefaultTableModel recipeModel;
 
     Recipe selectedRecipe;
 
-    DefaultTableModel recipeModel;
+    ArrayList<Recipe> recipeList;
+    ArrayList<Ingredient> ingredientList;
+    ArrayList<IngredientQty> shoppingList;
+    ArrayList<IngredientQty> inventoryList;
 
-    public RecipePanel() {
+    public RecipePanel(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList) {
         super(new MigLayout("fill, wrap 3", "50[][grow,fill]20[]", "50[][]20[grow,fill][]150[][][]50"));
+        this.recipeList = recipeList;
+        this.ingredientList = ingredientList;
+        this.shoppingList = shoppingList;
+        this.inventoryList = inventoryList;
 
         addButton = new JButton("AGGIUNGI");
         removeButton = new JButton("RIMUOVI");
@@ -55,31 +63,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         searchButton.addActionListener(this);
         searchBar.addKeyListener(this);
 
-        /*Test recipe list*/
-        recipeList = new ArrayList<>();
-
-        Recipe a = new Recipe();
-        a.setId(25);
-        a.setName("Lasagna");
-        a.setProcedure("In realta non so come si fanno");
-
-        Recipe b = new Recipe();
-        b.setId(10);
-        b.setName("Pizza");
-        b.setProcedure("Questa la sa fare Laura");
-
-        for (int i = 0; i < 1000; ++i)
-            recipeList.add(new Recipe());
-
-        recipeList.add(a);
-        recipeList.add(b);
-
-
-        /*end test*/
-
-
         Object[][] recipeMatrix = Recipe.toMatrix(recipeList);
-
 
         recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "T. Preparazione", "T. Cottura"}) {
             @Override
@@ -96,7 +80,6 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
         recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
         recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Ricette"));
 
@@ -137,13 +120,11 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         if (e.getSource() == filterButton) {
         }
 
-
         if (e.getSource() == addButton) {
             Recipe newRecipe = new Recipe(Recipe.getMaxId(recipeList) + 1);
-            new RecipeDetailFrame(newRecipe, true, recipeList, recipeTable);
+            new RecipeDetailFrame(newRecipe, true, recipeList, recipeTable, ingredientList, shoppingList);
             //TODO
         }
-
 
         if (e.getSource() == removeButton) {
             if (selectedRecipe != null) {
@@ -157,7 +138,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
         if (e.getSource() == openButton) {
             if (selectedRecipe != null)
-                new RecipeDetailFrame(selectedRecipe, false, recipeList, recipeTable);
+                new RecipeDetailFrame(selectedRecipe, false, recipeList, recipeTable, ingredientList, shoppingList);
             else
                 return;
         }

@@ -1,5 +1,6 @@
 package graphicalinterface;
 
+import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
@@ -30,13 +31,17 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
     private ArrayList<Recipe> recipeList;
     private JTable recipeTable;
     private RecipeDetailFrame callerFrame;
+    ArrayList<Ingredient> ingredientList;
+    ArrayList<IngredientQty> shoppingList;
 
-    public RecipeDetailPanelUnmodifiable(Recipe recipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame) {
+    public RecipeDetailPanelUnmodifiable(Recipe recipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList) {
         super(new MigLayout("fill, wrap 4", "[grow,fill][200,grow,fill][300,grow,fill][]", "[][][grow,fill][][][][]"));
         this.recipe = recipe;
         this.recipeList = recipeList;
         this.recipeTable = recipeTable;
         this.callerFrame = callerFrame;
+        this.ingredientList = ingredientList;
+        this.shoppingList = shoppingList;
 
         Object[][] ingredientMatrix = IngredientQty.toMatrix(recipe.getIngredients());
 
@@ -101,7 +106,7 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == modifyButton) {
-            callerFrame.setContentPane(new RecipeDetailPanelModifiable(recipe, false, recipeList, recipeTable, callerFrame));
+            callerFrame.setContentPane(new RecipeDetailPanelModifiable(recipe, false, recipeList, recipeTable, callerFrame, ingredientList, shoppingList));
             callerFrame.revalidate();
             callerFrame.repaint();
         }

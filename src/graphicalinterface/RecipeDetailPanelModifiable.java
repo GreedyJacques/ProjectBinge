@@ -1,5 +1,6 @@
 package graphicalinterface;
 
+import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
@@ -33,14 +34,18 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
     private ArrayList<Recipe> recipeList;
     private JTable recipeTable;
     private RecipeDetailFrame callerFrame;
+    ArrayList<Ingredient> ingredientList;
+    ArrayList<IngredientQty> shoppingList;
 
-    public RecipeDetailPanelModifiable(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame) {
+    public RecipeDetailPanelModifiable(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList) {
         super(new MigLayout("fill, wrap 5", "[grow,fill][grow,fill][200,grow,fill][300,grow,fill][]", "[][][grow,fill][][][]"));
         this.recipe = recipe;
         this.newrecipe = newrecipe;
         this.recipeList = recipeList;
         this.recipeTable = recipeTable;
         this.callerFrame = callerFrame;
+        this.ingredientList = ingredientList;
+        this.shoppingList = shoppingList;
 
         ingredientListNew = (ArrayList) recipe.getIngredients().clone();
 
@@ -111,7 +116,6 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
         cookModifiable.add(new JLabel(" min"));
 
         procedureTextModifiable.setLineWrap(true);
-
     }
 
     @Override
@@ -137,7 +141,7 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
 
             recipeTable.setModel(recipeModel);
 
-            callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame));
+            callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame, ingredientList, shoppingList));
             callerFrame.revalidate();
             callerFrame.repaint();
         }
@@ -145,7 +149,7 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
             if (newrecipe)
                 callerFrame.dispose();
             else {
-                callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame));
+                callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame, ingredientList, shoppingList));
                 callerFrame.revalidate();
                 callerFrame.repaint();
             }

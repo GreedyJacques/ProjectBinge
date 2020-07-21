@@ -1,5 +1,6 @@
 package graphicalinterface;
 
+import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import net.miginfocom.swing.MigLayout;
 
@@ -24,13 +25,15 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
     private IngredientQty newIngredientQty;
     private ArrayList<IngredientQty> ingredientQtylist;
     private JTable ingredientQtyTable;
+    private ArrayList<Ingredient> ingredientList;
 
-    public NewIngredientPanel(IngredientQty newIngredientQty, ArrayList<IngredientQty> ingredientQtylist, JTable ingredientQtyTable) {
-        super("NUOVO INGREDIENTE");
+    public NewIngredientPanel(IngredientQty newIngredientQty, ArrayList<IngredientQty> ingredientQtylist, JTable ingredientQtyTable, ArrayList<Ingredient> ingredientList) {
+        super("Nuovo Ingrediente");
 
         this.newIngredientQty = newIngredientQty;
         this.ingredientQtylist = ingredientQtylist;
         this.ingredientQtyTable = ingredientQtyTable;
+        this.ingredientList = ingredientList;
 
         mainpanel = new JPanel(new MigLayout("fill, wrap 1", "[grow, fill]", "20[][][][][][][][]"));
         addButton = new JButton("AGGIUNGI");
@@ -50,7 +53,6 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
         typePanel.add(gButton);
         typePanel.add(pzButton);
 
-
         addButton.setPreferredSize(new Dimension(175, 50));
 
         addButton.addActionListener(this);
@@ -69,7 +71,6 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
         mainpanel.add(ingredientKcal, "");
 
         mainpanel.add(addButton, "right");
-
 
         setContentPane(mainpanel);
         setLocation(400, 230);

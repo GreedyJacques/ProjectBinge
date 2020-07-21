@@ -16,53 +16,39 @@ import java.util.ArrayList;
 
 public class ShoppingPanel extends JPanel implements ActionListener {
     private JButton addButton, removeButton,
-            modifyButton, addFromRecipeButton;
+            exportButton, addFromRecipeButton;
 
-    private ArrayList<IngredientQty> ingredientQtyList;
-
-    DefaultTableModel ingredientQtyModel;
+    DefaultTableModel shoppingModel;
+    JTable shoppingTable;
 
     String selectedQty;
     Object selectedIngredient;
 
-    JTable ingredientQtyTable;
+    ArrayList<Recipe> recipeList;
+    ArrayList<Ingredient> ingredientList;
+    ArrayList<IngredientQty> shoppingList;
+    ArrayList<IngredientQty> inventoryList;
 
-    public ShoppingPanel() {
-
-
+    public ShoppingPanel(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList) {
         super(new MigLayout("fill, wrap 2", "50[grow,fill]20[]", "50[grow, fill][][][][]50"));
-
+        this.recipeList = recipeList;
+        this.ingredientList = ingredientList;
+        this.shoppingList = shoppingList;
+        this.inventoryList = inventoryList;
 
         addButton = new JButton("AGGIUNGI");
         removeButton = new JButton("RIMUOVI");
-        modifyButton = new JButton("MODIFICA");
+        exportButton = new JButton("ESPORTA");
         addFromRecipeButton = new JButton("AGGIUNGI DA RICETTA");
 
         addButton.addActionListener(this);
         removeButton.addActionListener(this);
-        modifyButton.addActionListener(this);
+        exportButton.addActionListener(this);
         addFromRecipeButton.addActionListener(this);
 
-        //TEST
-        ingredientQtyList = new ArrayList<>();
-        IngredientQty a = new IngredientQty();
-        a.setQty(2);
+        Object[][] shoppingMatrix = IngredientQty.toMatrix(shoppingList);
 
-        IngredientQty b = new IngredientQty();
-        b.setQty(6);
-
-        Ingredient c = new Ingredient("Nutella",1,5);
-        IngredientQty c1=new IngredientQty(c,300);
-
-        ingredientQtyList.add(a);
-        ingredientQtyList.add(b);
-        ingredientQtyList.add(c1);
-        //END TEST
-
-
-        Object[][] ingredientQtyMatrix = IngredientQty.toMatrix(ingredientQtyList);
-
-        ingredientQtyModel = new DefaultTableModel(ingredientQtyMatrix, new String[]{"ID", "Nome", "Qty"}) {
+        shoppingModel = new DefaultTableModel(shoppingMatrix, new String[]{"ID", "Nome", "Qty"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 if (column == 0 || column == 1)
@@ -72,24 +58,23 @@ public class ShoppingPanel extends JPanel implements ActionListener {
             }
         };
 
-        ingredientQtyTable = new JTable(ingredientQtyModel);
-        JScrollPane scrollPanel = new JScrollPane(ingredientQtyTable);
+        shoppingTable = new JTable(shoppingModel);
+        JScrollPane scrollPanel = new JScrollPane(shoppingTable);
 
-
-        ingredientQtyTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-        ingredientQtyTable.getColumnModel().getColumn(1).setPreferredWidth(750);
-        ingredientQtyTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+        shoppingTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        shoppingTable.getColumnModel().getColumn(1).setPreferredWidth(750);
+        shoppingTable.getColumnModel().getColumn(2).setPreferredWidth(750);
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Lista Spesa"));
 
-        ListSelectionModel selectionModel = ingredientQtyTable.getSelectionModel();
+        ListSelectionModel selectionModel = shoppingTable.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!selectionModel.isSelectionEmpty()) {
-                    int row = ingredientQtyTable.getSelectedRow();
-                    selectedIngredient = ingredientQtyModel.getValueAt(row, 1);
-                    selectedQty = (String) ingredientQtyModel.getValueAt(row, 2);
+                    int row = shoppingTable.getSelectedRow();
+                    selectedIngredient = shoppingModel.getValueAt(row, 1);
+                    selectedQty = (String) shoppingModel.getValueAt(row, 2);
                     JOptionPane.showMessageDialog(null, "there are " + selectedQty + " of " + selectedIngredient + " on the shopping list");
                 }
             }
@@ -97,7 +82,7 @@ public class ShoppingPanel extends JPanel implements ActionListener {
 
         addButton.setPreferredSize(new Dimension(175, 50));
         removeButton.setPreferredSize(new Dimension(175, 50));
-        modifyButton.setPreferredSize(new Dimension(175, 50));
+        exportButton.setPreferredSize(new Dimension(175, 50));
         addFromRecipeButton.setPreferredSize(new Dimension(175, 50));
 
         add(scrollPanel, "span 1 5, grow");
@@ -105,7 +90,7 @@ public class ShoppingPanel extends JPanel implements ActionListener {
         add(addButton, "right");
         add(addFromRecipeButton, "right");
         add(removeButton, "right");
-        add(modifyButton, "right");
+        add(exportButton, "right");
     }
 
     @Override
@@ -115,15 +100,15 @@ public class ShoppingPanel extends JPanel implements ActionListener {
         }
         if (e.getSource() == removeButton) {
             if (selectedIngredient != null) {
-                int row = ingredientQtyTable.getSelectedRow();
-                int selectedId = (int) ingredientQtyTable.getValueAt(row, 0);
-                ingredientQtyList.remove(IngredientQty.findIngredient(ingredientQtyList, (int) selectedId));
-                ingredientQtyModel.removeRow(row);
+                int row = shoppingTable.getSelectedRow();
+                int selectedId = (int) shoppingTable.getValueAt(row, 0);
+                shoppingList.remove(IngredientQty.findIngredient(shoppingList, (int) selectedId));
+                shoppingModel.removeRow(row);
             } else
                 return;
 
         }
-        if (e.getSource() == modifyButton) {
+        if (e.getSource() == exportButton) {
 
         }
         if (e.getSource() == addFromRecipeButton) {

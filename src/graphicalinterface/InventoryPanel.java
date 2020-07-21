@@ -4,7 +4,6 @@ import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -16,53 +15,41 @@ import java.util.ArrayList;
 
 public class InventoryPanel extends JPanel implements ActionListener {
 
-    private JButton addButton, removeButton, modifyButton;
+    private JButton addButton, removeButton, importButton;
 
-    private ArrayList<IngredientQty> ingredientQtyList;
-
-    DefaultTableModel ingredientQtyModel;
-
-    JTable ingredientQtyTable;
+    DefaultTableModel inventoryModel;
+    JTable inventoryTable;
 
     String selectedQty;
     Object selectedIngredient;
 
+    ArrayList<Recipe> recipeList;
+    ArrayList<Ingredient> ingredientList;
+    ArrayList<IngredientQty> shoppingList;
+    ArrayList<IngredientQty> inventoryList;
 
-    public InventoryPanel(){
-
-        super(new MigLayout("fill, wrap 2", "50[grow,fill]20[]","50[grow, fill][][][]50"));
+    public InventoryPanel(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList) {
+        super(new MigLayout("fill, wrap 2", "50[grow,fill]20[]", "50[grow, fill][][][]50"));
+        this.recipeList = recipeList;
+        this.ingredientList = ingredientList;
+        this.shoppingList = shoppingList;
+        this.inventoryList = inventoryList;
 
         addButton = new JButton("AGGIUNGI");
         removeButton = new JButton("RIMUOVI");
-        modifyButton = new JButton("MODIFICA");
+        importButton = new JButton("IMPORTA DA SPESA");
 
-        addButton.setPreferredSize(new Dimension(175,50));
-        removeButton.setPreferredSize(new Dimension(175,50));
-        modifyButton.setPreferredSize(new Dimension(175,50));
+        addButton.setPreferredSize(new Dimension(175, 50));
+        removeButton.setPreferredSize(new Dimension(175, 50));
+        importButton.setPreferredSize(new Dimension(175, 50));
 
         addButton.addActionListener(this);
         removeButton.addActionListener(this);
-        modifyButton.addActionListener(this);
+        importButton.addActionListener(this);
 
-        //TEST
-        ingredientQtyList = new ArrayList<>();
-        IngredientQty a = new IngredientQty();
-        a.setQty(2);
+        Object[][] inventoryMatrix = IngredientQty.toMatrix(inventoryList);
 
-        IngredientQty b = new IngredientQty();
-        b.setQty(6);
-
-        Ingredient c = new Ingredient("Nutella",1,5);
-        IngredientQty c1=new IngredientQty(c,300);
-
-        ingredientQtyList.add(a);
-        ingredientQtyList.add(b);
-        ingredientQtyList.add(c1);
-        //END TEST
-
-        Object[][] ingredientQtyMatrix = IngredientQty.toMatrix(ingredientQtyList);
-
-        ingredientQtyModel = new DefaultTableModel(ingredientQtyMatrix, new String[]{"ID", "Nome", "Qty"}) {
+        inventoryModel = new DefaultTableModel(inventoryMatrix, new String[]{"ID", "Nome", "Qty"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 if (column == 0 || column == 1)
@@ -72,74 +59,63 @@ public class InventoryPanel extends JPanel implements ActionListener {
             }
         };
 
-        ingredientQtyTable = new JTable(ingredientQtyModel);
-        JScrollPane scrollPanel = new JScrollPane(ingredientQtyTable);
+        inventoryTable = new JTable(inventoryModel);
+        JScrollPane scrollPanel = new JScrollPane(inventoryTable);
 
-
-        ingredientQtyTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-        ingredientQtyTable.getColumnModel().getColumn(1).setPreferredWidth(750);
-        ingredientQtyTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+        inventoryTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        inventoryTable.getColumnModel().getColumn(1).setPreferredWidth(750);
+        inventoryTable.getColumnModel().getColumn(2).setPreferredWidth(750);
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Inventario"));
 
-        ListSelectionModel selectionModel = ingredientQtyTable.getSelectionModel();
+        ListSelectionModel selectionModel = inventoryTable.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!selectionModel.isSelectionEmpty()) {
-                    int row = ingredientQtyTable.getSelectedRow();
-                    selectedIngredient = ingredientQtyModel.getValueAt(row, 1);
-                    selectedQty = (String) ingredientQtyModel.getValueAt(row, 2);
+                    int row = inventoryTable.getSelectedRow();
+                    selectedIngredient = inventoryModel.getValueAt(row, 1);
+                    selectedQty = (String) inventoryModel.getValueAt(row, 2);
                     JOptionPane.showMessageDialog(null, "there are " + selectedQty + " of " + selectedIngredient + " on the Inventory");
                 }
             }
         });
 
-
-        add(scrollPanel,"span 1 4, grow");
+        add(scrollPanel, "span 1 4, grow");
         add(new JLabel(""));
-        add(addButton,"right");
-        add(removeButton,"right");
-        add(modifyButton,"right");
-
+        add(addButton, "right");
+        add(removeButton, "right");
+        add(importButton, "right");
 
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if(e.getSource()==addButton){
+        if (e.getSource() == addButton) {
             Object[] options = {"nuovo ingrediente", "ingrediente presente"};
-            int n = JOptionPane.showOptionDialog(null,"cosa vuoi aggiungere?","AGGIUNGI",JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,null,options,options[0]);
+            int n = JOptionPane.showOptionDialog(null, "cosa vuoi aggiungere?", "AGGIUNGI", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-            if (n==0){
-                JOptionPane.showMessageDialog(null,"hai scelto nuovo ingrediente");
-                int newIngredientID = (IngredientQty.getMaxId(ingredientQtyList)) + 1;
+            if (n == 0) {
+                JOptionPane.showMessageDialog(null, "hai scelto nuovo ingrediente");
+                int newIngredientID = (IngredientQty.getMaxId(inventoryList)) + 1;
                 Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, -1);
-                IngredientQty newIngredientQty = new IngredientQty(newIngredient,0);
-                new NewIngredientPanel(newIngredientQty,ingredientQtyList,ingredientQtyTable);
-
-
-
+                IngredientQty newIngredientQty = new IngredientQty(newIngredient, 0);
+                new NewIngredientPanel(newIngredientQty, inventoryList, inventoryTable, ingredientList);
+            } else if (n == 1) {
+                JOptionPane.showMessageDialog(null, "hai scelto ingrediente presente");
             }
-            else if(n==1){
-                JOptionPane.showMessageDialog(null,"hai scelto ingrediente presente");
 
-
+            if (e.getSource() == removeButton) {
+                if (selectedIngredient != null) {
+                    int row = inventoryTable.getSelectedRow();
+                    int selectedId = (int) inventoryTable.getValueAt(row, 0);
+                    inventoryList.remove(IngredientQty.findIngredient(inventoryList, (int) selectedId));
+                    inventoryModel.removeRow(row);
+                } else
+                    return;
+            }
         }
-
-        if (e.getSource() == removeButton) {
-            if (selectedIngredient != null) {
-                int row = ingredientQtyTable.getSelectedRow();
-                int selectedId = (int) ingredientQtyTable.getValueAt(row, 0);
-                ingredientQtyList.remove(IngredientQty.findIngredient(ingredientQtyList, (int) selectedId));
-                ingredientQtyModel.removeRow(row);
-            } else
-                return;
-
-        }
-
     }
-}}
+}
