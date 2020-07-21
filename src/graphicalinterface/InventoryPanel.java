@@ -96,7 +96,7 @@ public class InventoryPanel extends JPanel implements ActionListener {
             int newIngredientID = (IngredientQty.getMaxId(inventoryList)) + 1;
             Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, -1);
             IngredientQty newIngredientQty = new IngredientQty(newIngredient, 0);
-            new existingIngredientPanel(newIngredientQty, inventoryList, inventoryTable, ingredientList);
+            new ExistingIngredientPanel(newIngredientQty, inventoryList, inventoryTable, ingredientList);
 
             }
 

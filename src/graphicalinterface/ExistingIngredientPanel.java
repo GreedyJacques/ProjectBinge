@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class existingIngredientPanel extends JFrame implements ActionListener {
+public class ExistingIngredientPanel extends JFrame implements ActionListener {
 
     private JPanel mainpanel;
 
@@ -25,7 +25,7 @@ public class existingIngredientPanel extends JFrame implements ActionListener {
     private JTable ingredientQtyTable;
     private ArrayList<Ingredient> ingredientList;
 
-    public existingIngredientPanel(IngredientQty newIngredientQty, ArrayList<IngredientQty> ingredientQtylist, JTable ingredientQtyTable, ArrayList<Ingredient> ingredientList) {
+    public ExistingIngredientPanel(IngredientQty newIngredientQty, ArrayList<IngredientQty> ingredientQtylist, JTable ingredientQtyTable, ArrayList<Ingredient> ingredientList) {
         super("Ingrediente");
 
         this.newIngredientQty = newIngredientQty;
