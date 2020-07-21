@@ -93,18 +93,11 @@ public class InventoryPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == addButton) {
-            Object[] options = {"nuovo ingrediente", "ingrediente presente"};
-            int n = JOptionPane.showOptionDialog(null, "cosa vuoi aggiungere?", "AGGIUNGI", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            int newIngredientID = (IngredientQty.getMaxId(inventoryList)) + 1;
+            Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, -1);
+            IngredientQty newIngredientQty = new IngredientQty(newIngredient, 0);
+            new existingIngredientPanel(newIngredientQty, inventoryList, inventoryTable, ingredientList);
 
-            if (n == 0) {
-                JOptionPane.showMessageDialog(null, "hai scelto nuovo ingrediente");
-                int newIngredientID = (IngredientQty.getMaxId(inventoryList)) + 1;
-                Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, -1);
-                IngredientQty newIngredientQty = new IngredientQty(newIngredient, 0);
-                new NewIngredientPanel(newIngredientQty, inventoryList, inventoryTable, ingredientList);
-            } else if (n == 1) {
-                JOptionPane.showMessageDialog(null, "hai scelto ingrediente presente");
             }
 
             if (e.getSource() == removeButton) {
@@ -118,4 +111,4 @@ public class InventoryPanel extends JPanel implements ActionListener {
             }
         }
     }
-}
+
