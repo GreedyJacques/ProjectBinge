@@ -4,6 +4,7 @@ import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -110,11 +111,21 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
     }
 
+    static ArrayList<Recipe> findSearchedRecipes(String searchedThing, ArrayList<Recipe> filteredRecipeList) {
+        ArrayList<Recipe> out = new ArrayList<>();
+        for (Recipe r : filteredRecipeList) {
+            if (r.getName().toLowerCase().contains(searchedThing.toLowerCase()))
+                out.add(r);
+        }
+        return out;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == searchButton) {
             String searchedThing = searchBar.getText();
-            JOptionPane.showMessageDialog(null, "you searched for: " + searchedThing);
+            ArrayList<Recipe> searchedRecipes = new ArrayList<>(findSearchedRecipes(searchedThing,recipeList));
+
         }
 
         if (e.getSource() == filterButton) {
@@ -151,13 +162,13 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getSource() == searchBar) {
+            String searchedThing = searchBar.getText();
 
-        String searchedThing = searchBar.getText();
-
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            JOptionPane.showMessageDialog(null, "you searched for: " + searchedThing);
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                JOptionPane.showMessageDialog(null, "you searched for: " + searchedThing);
+            }
         }
-
     }
 
     @Override

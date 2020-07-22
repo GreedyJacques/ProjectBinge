@@ -1,7 +1,6 @@
 package graphicalinterface;
 
-import com.jidesoft.swing.ComboBoxSearchable;
-import com.jidesoft.swing.SearchableUtils;
+
 import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import net.miginfocom.swing.MigLayout;

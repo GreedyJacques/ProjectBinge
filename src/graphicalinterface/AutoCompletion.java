@@ -191,7 +191,7 @@ public class AutoCompletion extends PlainDocument {
         frame.pack(); frame.setVisible(true);
     }
 
-
+    /*
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -199,4 +199,5 @@ public class AutoCompletion extends PlainDocument {
             }
         });
     }
+    */
 }
