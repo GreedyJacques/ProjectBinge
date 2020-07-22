@@ -123,7 +123,7 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
                 ingredientList.add(new Ingredient(newIngredientQty.getId(),newIngredientQty.getName(),newIngredientQty.getType(),newIngredientQty.getKcal()));
                 ingredientQtylist.add(newIngredientQty);
 
-                Object[] newIngredientQtyRow = {newIngredientQty.getId(),newIngredientQty.getName(),newIngredientQty.getQty() + " " + newIngredientQty.stringType(), newIngredientQty.getKcal(), newIngredientQty.getType()};
+                Object[] newIngredientQtyRow = {newIngredientQty.getId(),newIngredientQty.getName(),newIngredientQty.getQty() + " " + newIngredientQty.stringType(), newIngredientQty.getTotKcal(), newIngredientQty.getType()};
 
                 DefaultTableModel model = (DefaultTableModel) ingredientQtyTable.getModel();
 

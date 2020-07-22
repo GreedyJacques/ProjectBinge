@@ -4,7 +4,10 @@ import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -36,6 +39,9 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
     private RecipeDetailFrame callerFrame;
     ArrayList<Ingredient> ingredientList;
     ArrayList<IngredientQty> shoppingList;
+    DefaultTableModel ingredientModelModifiable;
+    String selectedQty;
+    Object selectedIngredient;
 
     public RecipeDetailPanelModifiable(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList) {
         super(new MigLayout("fill, wrap 5", "[grow,fill][grow,fill][200,grow,fill][300,grow,fill][]", "[][][grow,fill][][][]"));
@@ -51,7 +57,7 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
 
         Object[][] ingredientMatrixNew = IngredientQty.toMatrix(ingredientListNew);
 
-        DefaultTableModel ingredientModelModifiable = new DefaultTableModel(ingredientMatrixNew, new String[]{"Id", "Nome", "Qta", "kCal"}) {
+        ingredientModelModifiable = new DefaultTableModel(ingredientMatrixNew, new String[]{"Id", "Nome", "Qta", "kCal"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 if (column == 2)
@@ -116,6 +122,20 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
         cookModifiable.add(new JLabel(" min"));
 
         procedureTextModifiable.setLineWrap(true);
+
+        ListSelectionModel selectionModel = ingredientsTableModifiable.getSelectionModel();
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!selectionModel.isSelectionEmpty()) {
+                    int row = ingredientsTableModifiable.getSelectedRow();
+                    selectedIngredient = ingredientModelModifiable.getValueAt(row, 1);
+                    selectedQty = (String) ingredientsTableModifiable.getValueAt(row, 2);
+                }
+            }
+        });
+
+        ingredientsTableModifiable.setAutoCreateRowSorter(true);
     }
 
     @Override
@@ -155,10 +175,16 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
             }
         }
         if (e.getSource() == addIngredientButton) {
-
+            new ExistingIngredientPanel(ingredientListNew, ingredientsTableModifiable, ingredientList);
         }
         if (e.getSource() == removeIngredientButton) {
-
+            if (selectedIngredient != null) {
+                int row = ingredientsTableModifiable.getSelectedRow();
+                int selectedId = (int) ingredientsTableModifiable.getValueAt(row, 0);
+                ingredientListNew.remove(IngredientQty.findIngredientQty(ingredientListNew, selectedId));
+                ingredientModelModifiable.removeRow(row);
+                selectedIngredient = null;
+            }
         }
     }
 }

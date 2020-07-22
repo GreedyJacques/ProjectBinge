@@ -4,6 +4,7 @@ import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -76,7 +77,6 @@ public class InventoryPanel extends JPanel implements ActionListener {
                     int row = inventoryTable.getSelectedRow();
                     selectedIngredient = inventoryModel.getValueAt(row, 1);
                     selectedQty = (String) inventoryModel.getValueAt(row, 2);
-                    JOptionPane.showMessageDialog(null, "there are " + selectedQty + " of " + selectedIngredient + " on the Inventory");
                 }
             }
         });
@@ -87,6 +87,7 @@ public class InventoryPanel extends JPanel implements ActionListener {
         add(removeButton, "right");
         add(importButton, "right");
 
+        inventoryTable.setAutoCreateRowSorter(true);
     }
 
     @Override
@@ -94,18 +95,17 @@ public class InventoryPanel extends JPanel implements ActionListener {
 
         if (e.getSource() == addButton) {
             new ExistingIngredientPanel(inventoryList, inventoryTable, ingredientList);
+        }
 
-            }
-
-            if (e.getSource() == removeButton) {
-                if (selectedIngredient != null) {
-                    int row = inventoryTable.getSelectedRow();
-                    int selectedId = (int) inventoryTable.getValueAt(row, 0);
-                    inventoryList.remove(IngredientQty.findIngredientQty(inventoryList, (int) selectedId));
-                    inventoryModel.removeRow(row);
-                } else
-                    return;
+        if (e.getSource() == removeButton) {
+            if (selectedIngredient != null) {
+                int row = inventoryTable.getSelectedRow();
+                int selectedId = (int) inventoryTable.getValueAt(row, 0);
+                inventoryList.remove(IngredientQty.findIngredientQty(inventoryList, selectedId));
+                inventoryModel.removeRow(row);
+                selectedIngredient = null;
             }
         }
     }
+}
 

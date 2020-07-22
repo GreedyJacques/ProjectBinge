@@ -75,7 +75,6 @@ public class ShoppingPanel extends JPanel implements ActionListener {
                     int row = shoppingTable.getSelectedRow();
                     selectedIngredient = shoppingModel.getValueAt(row, 1);
                     selectedQty = (String) shoppingModel.getValueAt(row, 2);
-                    JOptionPane.showMessageDialog(null, "there are " + selectedQty + " of " + selectedIngredient + " on the shopping list");
                 }
             }
         });
@@ -91,22 +90,23 @@ public class ShoppingPanel extends JPanel implements ActionListener {
         add(addFromRecipeButton, "right");
         add(removeButton, "right");
         add(exportButton, "right");
+
+        shoppingTable.setAutoCreateRowSorter(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addButton) {
-
+            new ExistingIngredientPanel(shoppingList, shoppingTable, ingredientList);
         }
         if (e.getSource() == removeButton) {
             if (selectedIngredient != null) {
                 int row = shoppingTable.getSelectedRow();
                 int selectedId = (int) shoppingTable.getValueAt(row, 0);
-                shoppingList.remove(IngredientQty.findIngredientQty(shoppingList, (int) selectedId));
+                shoppingList.remove(IngredientQty.findIngredientQty(shoppingList, selectedId));
                 shoppingModel.removeRow(row);
-            } else
-                return;
-
+                selectedIngredient = null;
+            }
         }
         if (e.getSource() == exportButton) {
 

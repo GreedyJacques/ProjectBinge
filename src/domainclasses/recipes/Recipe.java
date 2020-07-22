@@ -77,7 +77,7 @@ public class Recipe {
     }
 
     public static Object[][] toMatrix(ArrayList<Recipe> recipes) {
-        Object[][] out = new Object[recipes.size()][5];
+        Object[][] out = new Object[recipes.size()][6];
 
         for (int i = 0; i < recipes.size(); ++i) {
             out[i][0] = recipes.get(i).getId();
@@ -85,6 +85,7 @@ public class Recipe {
             out[i][2] = recipes.get(i).getKcal();
             out[i][3] = recipes.get(i).getPreptime();
             out[i][4] = recipes.get(i).getCooktime();
+            out[i][5] = recipes.get(i).getPreptime() + recipes.get(i).getCooktime();
         }
 
         return out;

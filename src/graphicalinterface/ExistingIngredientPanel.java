@@ -96,8 +96,56 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == ingredientName) {
-            Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList,idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
+            Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList, idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
             ingredientKcal.setText(selectedIngredient.getKcal() + " kCal per " + selectedIngredient.stringType());
+        }
+
+        if (e.getSource() == addButton) {
+            int quantity = 0;
+            boolean correct = true;
+            try {
+                quantity = Integer.parseInt(ingredientQty.getText());
+            } catch (NumberFormatException exception1) {
+                JOptionPane.showMessageDialog(null, "Inserisci la quantita'");
+                correct = false;
+            }
+            if (correct) {
+                Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList, idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
+                boolean added = false;
+                for (IngredientQty i : ingredientQtylist) {
+                    if (i.getId() == selectedIngredient.getId()) {
+                        i.setQty(i.getQty() + quantity);
+                        added = true;
+
+                        int row = 0;
+
+                        while (row < ingredientQtyTable.getRowCount()) {
+                            if ((int) ingredientQtyTable.getValueAt(row, 0) == selectedIngredient.getId())
+                                break;
+                            else
+                                row++;
+                        }
+
+                        ingredientQtyTable.setValueAt(i.getQty() + " " + i.stringType(), row, 2);
+
+                        dispose();
+
+                        break;
+                    }
+                }
+                if (!added) {
+                    IngredientQty selectedIngredientQty = new IngredientQty(selectedIngredient, quantity);
+                    ingredientQtylist.add(selectedIngredientQty);
+
+                    Object[] newIngredientQtyRow = {selectedIngredientQty.getId(), selectedIngredientQty.getName(), selectedIngredientQty.getQty() + " " + selectedIngredientQty.stringType(), selectedIngredientQty.getTotKcal(), selectedIngredientQty.getType()};
+
+                    DefaultTableModel model = (DefaultTableModel) ingredientQtyTable.getModel();
+
+                    model.addRow(newIngredientQtyRow);
+
+                    dispose();
+                }
+            }
         }
 
         if (e.getSource() == newButton) {
@@ -108,5 +156,3 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
         }
     }
 }
-
-

@@ -8,17 +8,13 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
@@ -62,11 +58,12 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         openButton.addActionListener(this);
         addButton.addActionListener(this);
         searchButton.addActionListener(this);
+        filterButton.addActionListener(this);
         searchBar.addKeyListener(this);
 
         Object[][] recipeMatrix = Recipe.toMatrix(recipeList);
 
-        recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "T. Preparazione", "T. Cottura"}) {
+        recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -81,6 +78,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
         recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
         recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+        recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Ricette"));
 
@@ -109,6 +107,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
             }
         });
 
+        recipeTable.setAutoCreateRowSorter(true);
     }
 
     static ArrayList<Recipe> findSearchedRecipes(String searchedThing, ArrayList<Recipe> filteredRecipeList) {
@@ -124,11 +123,36 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == searchButton) {
             String searchedThing = searchBar.getText();
-            ArrayList<Recipe> searchedRecipes = new ArrayList<>(findSearchedRecipes(searchedThing,recipeList));
+            ArrayList<Recipe> searchedRecipeList = new ArrayList<>(findSearchedRecipes(searchedThing,recipeList));
 
+            Object[][] searchedRecipeMatrix = Recipe.toMatrix(searchedRecipeList);
+
+            DefaultTableModel searchedRecipeModel = new DefaultTableModel(searchedRecipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            recipeTable.setModel(searchedRecipeModel);
+
+            recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+            recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
+            recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+            recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+            recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+            recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
         }
 
         if (e.getSource() == filterButton) {
+            recipeTable.setModel(recipeModel);
+
+            recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+            recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
+            recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+            recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+            recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+            recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
         }
 
         if (e.getSource() == addButton) {
@@ -143,8 +167,8 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
                 Object selectedId = recipeTable.getValueAt(row, 0);
                 recipeList.remove(Recipe.findRecipe(recipeList, (int) selectedId));
                 recipeModel.removeRow(row);
-            } else
-                return;
+                selectedRecipe = null;
+            }
         }
 
         if (e.getSource() == openButton) {
