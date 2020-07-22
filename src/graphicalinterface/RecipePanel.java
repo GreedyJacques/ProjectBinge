@@ -85,10 +85,8 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         add(new JLabel("Cerca:"), "right");
         add(searchBar, "");
         add(searchButton, "left");
-        add(new JLabel("Ordina Per:"), "top");
-        add(new JPanel(new GridLayout(1, 8)));
+        add(scrollPanel, "span 2 6, grow");
         add(filterButton, "left");
-        add(scrollPanel, "span 2 5, grow");
         add(new JLabel(""), "");
         add(new JLabel(""));
         add(addButton, "right");
