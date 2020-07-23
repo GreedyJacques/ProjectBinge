@@ -6,6 +6,8 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import javax.swing.text.Document;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -13,25 +15,25 @@ import java.util.ArrayList;
 public class ExportFrame extends JFrame implements ActionListener {
     private JPanel mainpanel;
 
-    private JTextArea shoppingIngredient;
+    private JTextArea shoppingIngredients;
     private JScrollPane scrollShopping;
 
     private JButton copyButton;
 
-    public ExportFrame(ArrayList<IngredientQty> shoppingList){
+    public ExportFrame(ArrayList<IngredientQty> shoppingList) {
         super("Lista Della Spesa");
 
-        mainpanel= new JPanel(new MigLayout("fill, wrap 1", "[grow, fill]", "[grow, fill][]"));
-        copyButton=new JButton("COPIA NELLA CLIPBOARD");
-        shoppingIngredient= new JTextArea(ShoppingPanel.getShoppingIngredient(shoppingList));
+        mainpanel = new JPanel(new MigLayout("fill, wrap 1", "[grow, fill]", "[grow, fill][]"));
+        copyButton = new JButton("COPIA NELLA CLIPBOARD");
+        shoppingIngredients = new JTextArea(ShoppingPanel.getShoppingIngredient(shoppingList));
 
         copyButton.addActionListener(this);
 
         copyButton.setPreferredSize(new Dimension(50, 50));
 
-        shoppingIngredient.setEditable(false);
+        shoppingIngredients.setEditable(false);
 
-        scrollShopping=new JScrollPane(shoppingIngredient);
+        scrollShopping = new JScrollPane(shoppingIngredients);
 
         mainpanel.add(scrollShopping);
         mainpanel.add(copyButton);
@@ -43,14 +45,14 @@ public class ExportFrame extends JFrame implements ActionListener {
         setVisible(true);
 
 
-
-
-
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==copyButton){
-
+        if (e.getSource() == copyButton) {
+            StringSelection stringSelection = new StringSelection(shoppingIngredients.getText());
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, null);
         }
 
     }

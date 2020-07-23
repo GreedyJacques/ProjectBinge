@@ -113,7 +113,7 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
     static String getShoppingIngredient(ArrayList<IngredientQty> shoppingList){
         String out = new String();
         for(IngredientQty i : shoppingList){
-            out += "\n"+ i.getQty() + i.stringType()+" "+ i.getName();
+            out += i.getQty() + i.stringType()+" "+ i.getName() + '\n';
 
         }
         return out;
