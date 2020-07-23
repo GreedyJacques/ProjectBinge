@@ -23,6 +23,8 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
     DefaultTableModel shoppingModel;
     JTable shoppingTable;
 
+    private JFrame exportFrame;
+
     private JTextField searchBar;
 
     String selectedQty;
@@ -108,6 +110,16 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
         shoppingTable.setAutoCreateRowSorter(true);
     }
 
+    static String getShoppingIngredient(ArrayList<IngredientQty> shoppingList){
+        String out = new String();
+        for(IngredientQty i : shoppingList){
+            out += "\n"+ i.getQty() + i.stringType()+" "+ i.getName();
+
+        }
+        return out;
+    }
+
+
     static ArrayList<IngredientQty> findSearchedIngredientsQty(String searchedThing, ArrayList<IngredientQty> filteredIngredientsList) {
         ArrayList<IngredientQty> out = new ArrayList<>();
         for (IngredientQty r : filteredIngredientsList) {
@@ -132,6 +144,8 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
             }
         }
         if (e.getSource() == exportButton) {
+          new ExportFrame(shoppingList);
+
 
         }
         if (e.getSource() == addFromRecipeButton) {
