@@ -12,14 +12,18 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class InventoryPanel extends JPanel implements ActionListener {
+public class InventoryPanel extends JPanel implements ActionListener, KeyListener {
 
-    private JButton addButton, removeButton, importButton;
+    private JButton addButton, removeButton, importButton, searchButton;
 
     DefaultTableModel inventoryModel;
     JTable inventoryTable;
+
+    private JTextField searchBar;
 
     String selectedQty;
     Object selectedIngredient;
@@ -30,19 +34,26 @@ public class InventoryPanel extends JPanel implements ActionListener {
     ArrayList<IngredientQty> inventoryList;
 
     public InventoryPanel(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList) {
-        super(new MigLayout("fill, wrap 2", "50[grow,fill]20[]", "50[grow, fill][][][]50"));
+        super(new MigLayout("fill, wrap 3", "50[][grow,fill]20[]", "50[]20[grow, fill][][][][]50"));
         this.recipeList = recipeList;
         this.ingredientList = ingredientList;
         this.shoppingList = shoppingList;
         this.inventoryList = inventoryList;
 
+        searchBar = new JTextField("");
+
+        searchButton = new JButton("CERCA");
         addButton = new JButton("AGGIUNGI");
         removeButton = new JButton("RIMUOVI");
         importButton = new JButton("IMPORTA DA SPESA");
 
+        searchButton.addActionListener(this);
         addButton.setPreferredSize(new Dimension(175, 50));
         removeButton.setPreferredSize(new Dimension(175, 50));
         importButton.setPreferredSize(new Dimension(175, 50));
+        searchButton.setPreferredSize(new Dimension(75, 30));
+
+        searchBar.addKeyListener(this);
 
         addButton.addActionListener(this);
         removeButton.addActionListener(this);
@@ -81,13 +92,26 @@ public class InventoryPanel extends JPanel implements ActionListener {
             }
         });
 
-        add(scrollPanel, "span 1 4, grow");
+        add(new JLabel("Cerca:"), "right");
+        add(searchBar, "");
+        add(searchButton, "left");
+        add(scrollPanel, "span 2 5, grow");
+        add(new JLabel(""));
         add(new JLabel(""));
         add(addButton, "right");
         add(removeButton, "right");
         add(importButton, "right");
 
         inventoryTable.setAutoCreateRowSorter(true);
+    }
+
+    static ArrayList<IngredientQty> findSearchedIngredientsQty(String searchedThing, ArrayList<IngredientQty> filteredIngredientsList) {
+        ArrayList<IngredientQty> out = new ArrayList<>();
+        for (IngredientQty r : filteredIngredientsList) {
+            if (r.getName().toLowerCase().contains(searchedThing.toLowerCase()))
+                out.add(r);
+        }
+        return out;
     }
 
     @Override
@@ -106,6 +130,70 @@ public class InventoryPanel extends JPanel implements ActionListener {
                 selectedIngredient = null;
             }
         }
+        if (e.getSource() == searchButton) {
+
+            String searchedThing = searchBar.getText();
+            ArrayList<IngredientQty> searchedIngredientsList = new ArrayList<>(findSearchedIngredientsQty(searchedThing, inventoryList));
+
+            Object[][] searchedIngredientsMatrix = IngredientQty.toMatrix(searchedIngredientsList);
+
+            DefaultTableModel searchedIngredientsModel = new DefaultTableModel(searchedIngredientsMatrix, new String[]{"ID", "Nome", "Qty"}) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            inventoryTable.setModel(searchedIngredientsModel);
+
+
+            inventoryTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+            inventoryTable.getColumnModel().getColumn(1).setPreferredWidth(750);
+            inventoryTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+
+
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getSource() == searchBar) {
+            String searchedThing = searchBar.getText();
+
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+                ArrayList<IngredientQty> searchedIngredientsList = new ArrayList<>(findSearchedIngredientsQty(searchedThing, inventoryList));
+
+                Object[][] searchedIngredientsMatrix = IngredientQty.toMatrix(searchedIngredientsList);
+
+                DefaultTableModel searchedIngredientsModel = new DefaultTableModel(searchedIngredientsMatrix, new String[]{"ID", "Nome", "Qty"}) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                };
+
+                inventoryTable.setModel(searchedIngredientsModel);
+
+
+                inventoryTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+                inventoryTable.getColumnModel().getColumn(1).setPreferredWidth(750);
+                inventoryTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+
+
+            }
+        }
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }
 
