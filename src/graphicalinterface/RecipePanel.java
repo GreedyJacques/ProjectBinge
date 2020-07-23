@@ -121,7 +121,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == searchButton) {
             String searchedThing = searchBar.getText();
-            ArrayList<Recipe> searchedRecipeList = new ArrayList<>(findSearchedRecipes(searchedThing,recipeList));
+            ArrayList<Recipe> searchedRecipeList = new ArrayList<>(findSearchedRecipes(searchedThing, recipeList));
 
             Object[][] searchedRecipeMatrix = Recipe.toMatrix(searchedRecipeList);
 
@@ -188,7 +188,24 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
             String searchedThing = searchBar.getText();
 
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                JOptionPane.showMessageDialog(null, "you searched for: " + searchedThing);
+                ArrayList<Recipe> searchedRecipeList = new ArrayList<>(findSearchedRecipes(searchedThing, recipeList));
+
+                Object[][] searchedRecipeMatrix = Recipe.toMatrix(searchedRecipeList);
+
+                DefaultTableModel searchedRecipeModel = new DefaultTableModel(searchedRecipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                };
+                recipeTable.setModel(searchedRecipeModel);
+
+                recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+                recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
+                recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+                recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+                recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+                recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
             }
         }
     }
