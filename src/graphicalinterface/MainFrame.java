@@ -4,12 +4,15 @@ import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainFrame extends JFrame implements ActionListener, ChangeListener {
@@ -26,6 +29,13 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
 
     public MainFrame() {
         super("Project Binge");
+
+        try {
+            setIconImage(ImageIO.read(new File("icons/icon.png")));
+        }
+        catch (IOException exc) {
+            exc.printStackTrace();
+        }
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
