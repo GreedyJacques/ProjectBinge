@@ -5,11 +5,14 @@ import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import net.miginfocom.swing.MigLayout;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ExistingIngredientPanel extends JFrame implements ActionListener {
@@ -30,6 +33,13 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
 
     public ExistingIngredientPanel(ArrayList<IngredientQty> ingredientQtylist, JTable ingredientQtyTable, ArrayList<Ingredient> ingredientList) {
         super("Aggiungi Ingrediente");
+
+        try {
+            setIconImage(ImageIO.read(new File("icons/icon.png")));
+        }
+        catch (IOException exc) {
+            exc.printStackTrace();
+        }
 
         this.ingredientQtylist = ingredientQtylist;
         this.ingredientQtyTable = ingredientQtyTable;

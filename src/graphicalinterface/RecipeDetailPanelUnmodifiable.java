@@ -43,6 +43,8 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
         this.ingredientList = ingredientList;
         this.shoppingList = shoppingList;
 
+
+
         Object[][] ingredientMatrix = IngredientQty.toMatrix(recipe.getIngredients());
 
         DefaultTableModel ingredientModelUnmodifiable = new DefaultTableModel(ingredientMatrix, new String[]{"Id", "Nome", "Qta", "kCal"}) {
