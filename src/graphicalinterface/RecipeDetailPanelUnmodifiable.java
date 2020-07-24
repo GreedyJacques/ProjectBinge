@@ -4,6 +4,7 @@ import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -42,7 +43,6 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
         this.callerFrame = callerFrame;
         this.ingredientList = ingredientList;
         this.shoppingList = shoppingList;
-
 
 
         Object[][] ingredientMatrix = IngredientQty.toMatrix(recipe.getIngredients());
@@ -115,6 +115,30 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
             callerFrame.repaint();
         }
         if (e.getSource() == removeButton) {
+            int selectedId = recipe.getId();
+            recipeList.remove(Recipe.findRecipe(recipeList, selectedId));
+
+            Object[][] recipeMatrix = Recipe.toMatrix(recipeList);
+
+            DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            recipeTable.setModel(recipeModel);
+
+            recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+            recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
+            recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+            recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+            recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+            recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
+
+            callerFrame.dispose();
+        }
+        if(e.getSource() == addShoppingButton){
 
         }
     }
