@@ -3,11 +3,14 @@ package graphicalinterface;
 import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
+import launchcode.Main;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -70,6 +73,22 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
                     return true;
             }
         };
+        inventoryModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (inventoryTable.getSelectedRow() >= 0 && inventoryTable.getSelectedRow() < inventoryTable.getRowCount()) {
+                    int selectedRow = inventoryTable.getSelectedRow();
+                    inventoryTable.clearSelection();
+                    String newQty = (String) inventoryTable.getValueAt(selectedRow, 2);
+                    int Qty = Main.strtoint(newQty);
+                    IngredientQty tmpIngredientQty = IngredientQty.findIngredientQty(inventoryList, (int) inventoryTable.getValueAt(selectedRow, 0));
+                    if (Qty > 0)
+                        tmpIngredientQty.setQty(Qty);
+                    inventoryTable.setValueAt(tmpIngredientQty.getQty() + " " + tmpIngredientQty.stringType(), selectedRow, 2);
+                    System.out.println(inventoryTable.getSelectedRow());
+                }
+            }
+        });
 
         inventoryTable = new JTable(inventoryModel);
         JScrollPane scrollPanel = new JScrollPane(inventoryTable);
@@ -80,17 +99,17 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Inventario"));
 
-        ListSelectionModel selectionModel = inventoryTable.getSelectionModel();
+        /*ListSelectionModel selectionModel = inventoryTable.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!selectionModel.isSelectionEmpty()) {
                     int row = inventoryTable.getSelectedRow();
-                    selectedIngredient = inventoryModel.getValueAt(row, 1);
+                    selectedIngredient = inventoryModel.getValueAt(row, 0);
                     selectedQty = (String) inventoryModel.getValueAt(row, 2);
                 }
             }
-        });
+        });*/
 
         add(new JLabel("Cerca:"), "right");
         add(searchBar, "");

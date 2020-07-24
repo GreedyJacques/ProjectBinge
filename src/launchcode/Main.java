@@ -40,7 +40,10 @@ public class Main {
             out *= 10;
             out += c - '0';
             i++;
-            c = s.charAt(i);
+            if (i == s.length())
+                break;
+            else
+                c = s.charAt(i);
         }
         return out;
     }

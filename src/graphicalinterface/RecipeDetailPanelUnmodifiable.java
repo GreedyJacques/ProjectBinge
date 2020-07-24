@@ -6,6 +6,7 @@ import domainclasses.recipes.Recipe;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -44,7 +45,6 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
         this.ingredientList = ingredientList;
         this.shoppingList = shoppingList;
 
-
         Object[][] ingredientMatrix = IngredientQty.toMatrix(recipe.getIngredients());
 
         DefaultTableModel ingredientModelUnmodifiable = new DefaultTableModel(ingredientMatrix, new String[]{"Id", "Nome", "Qta", "kCal"}) {
@@ -77,6 +77,44 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
         addShoppingButton.addActionListener(this);
         removeButton.addActionListener(this);
         modifyButton.addActionListener(this);
+
+        portionsUnmodifiableValue.getDocument().addDocumentListener(new SimpleDocumentListener() {
+            @Override
+            public void update(DocumentEvent e) {
+                boolean correct = true;
+                int portions = 1;
+                try {
+                    portions = Integer.parseInt(portionsUnmodifiableValue.getText());
+                } catch (NumberFormatException exception) {
+                    correct = false;
+                }
+                if (correct && portions > 0) {
+                    Object[][] ingredientMatrix = IngredientQty.toMatrix(recipe.getIngredients());
+
+                    DefaultTableModel ingredientModelUnmodifiable = new DefaultTableModel(ingredientMatrix, new String[]{"Id", "Nome", "Qta", "kCal"}) {
+                        @Override
+                        public boolean isCellEditable(int row, int column) {
+                            return false;
+                        }
+                    };
+
+                    ingredientsTableUnmodifiable.setModel(ingredientModelUnmodifiable);
+
+                    for (int i = 0; i < ingredientsTableUnmodifiable.getRowCount(); ++i) {
+                        ingredientsTableUnmodifiable.setValueAt((recipe.getIngredients().get(i).getQty() * portions) + " " + recipe.getIngredients().get(i).stringType(), i, 2);
+                        ingredientsTableUnmodifiable.setValueAt(recipe.getIngredients().get(i).getTotKcal() * portions, i, 3);
+
+                    }
+
+                    ingredientsTableUnmodifiable.getColumnModel().getColumn(0).setPreferredWidth(40);
+                    ingredientsTableUnmodifiable.getColumnModel().getColumn(1).setPreferredWidth(150);
+                    ingredientsTableUnmodifiable.getColumnModel().getColumn(2).setPreferredWidth(50);
+                    ingredientsTableUnmodifiable.getColumnModel().getColumn(3).setPreferredWidth(50);
+
+                    kcalUnmodifiable.setText("kCal totali: " + recipe.getKcal() * portions);
+                }
+            }
+        });
 
         addShoppingButton.setPreferredSize(new Dimension(175, 50));
         removeButton.setPreferredSize(new Dimension(175, 50));
@@ -138,7 +176,7 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
 
             callerFrame.dispose();
         }
-        if(e.getSource() == addShoppingButton){
+        if (e.getSource() == addShoppingButton) {
 
         }
     }

@@ -118,20 +118,23 @@ public class AutoCompletion extends PlainDocument {
         // insert the string into the document
         super.insertString(offs, str, a);
         // lookup and select a matching item
-        Object item = lookupItem(getText(0, getLength()));
-        if (item != null) {
-            setSelectedItem(item);
-        } else {
-            // keep old item selected if there is no match
-            item = comboBox.getSelectedItem();
-            // imitate no insert (later on offs will be incremented by str.length(): selection won't move forward)
-            offs = offs-str.length();
-            // provide feedback to the user that his input has been received but can not be accepted
-            comboBox.getToolkit().beep(); // when available use: UIManager.getLookAndFeel().provideErrorFeedback(comboBox);
+        try {
+            Object item = lookupItem(getText(0, getLength()));
+            if (item != null) {
+                setSelectedItem(item);
+            } else {
+                // keep old item selected if there is no match
+                item = comboBox.getSelectedItem();
+                // imitate no insert (later on offs will be incremented by str.length(): selection won't move forward)
+                offs = offs - str.length();
+                // provide feedback to the user that his input has been received but can not be accepted
+                comboBox.getToolkit().beep(); // when available use: UIManager.getLookAndFeel().provideErrorFeedback(comboBox);
+            }
+            setText(item.toString());
+            // select the completed part
+            highlightCompletedText(offs + str.length());
+        } catch (NullPointerException exception) {
         }
-        setText(item.toString());
-        // select the completed part
-        highlightCompletedText(offs+str.length());
     }
 
     private void setText(String text) {

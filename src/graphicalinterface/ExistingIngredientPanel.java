@@ -36,8 +36,7 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
 
         try {
             setIconImage(ImageIO.read(new File("icons/icon.png")));
-        }
-        catch (IOException exc) {
+        } catch (IOException exc) {
             exc.printStackTrace();
         }
 
@@ -63,6 +62,8 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
         ingredientQty = new JTextField();
 
         AutoCompletion.enable(ingredientName);
+
+        ingredientName.setSelectedIndex(-1);
 
         ingredientKcal = new JLabel();
 
@@ -106,55 +107,63 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == ingredientName) {
-            Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList, idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
-            ingredientKcal.setText(selectedIngredient.getKcal() + " kCal per " + selectedIngredient.stringType());
+            try {
+                Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList, idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
+                ingredientKcal.setText(selectedIngredient.getKcal() + " kCal per " + selectedIngredient.stringType());
+            } catch (ArrayIndexOutOfBoundsException exception) {
+
+            }
         }
 
         if (e.getSource() == addButton) {
-            int quantity = 0;
-            boolean correct = true;
             try {
-                quantity = Integer.parseInt(ingredientQty.getText());
-            } catch (NumberFormatException exception1) {
-                JOptionPane.showMessageDialog(null, "Inserisci la quantita'");
-                correct = false;
-            }
-            if (correct) {
-                Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList, idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
-                boolean added = false;
-                for (IngredientQty i : ingredientQtylist) {
-                    if (i.getId() == selectedIngredient.getId()) {
-                        i.setQty(i.getQty() + quantity);
-                        added = true;
+                int quantity = 0;
+                boolean correct = true;
+                try {
+                    quantity = Integer.parseInt(ingredientQty.getText());
+                } catch (NumberFormatException exception1) {
+                    JOptionPane.showMessageDialog(null, "Inserisci la quantita'");
+                    correct = false;
+                }
+                if (correct) {
+                    Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList, idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
+                    boolean added = false;
+                    for (IngredientQty i : ingredientQtylist) {
+                        if (i.getId() == selectedIngredient.getId()) {
+                            i.setQty(i.getQty() + quantity);
+                            added = true;
 
-                        int row = 0;
+                            int row = 0;
 
-                        while (row < ingredientQtyTable.getRowCount()) {
-                            if ((int) ingredientQtyTable.getValueAt(row, 0) == selectedIngredient.getId())
-                                break;
-                            else
-                                row++;
+                            while (row < ingredientQtyTable.getRowCount()) {
+                                if ((int) ingredientQtyTable.getValueAt(row, 0) == selectedIngredient.getId())
+                                    break;
+                                else
+                                    row++;
+                            }
+
+                            ingredientQtyTable.setValueAt(i.getQty() + " " + i.stringType(), row, 2);
+
+                            dispose();
+
+                            break;
                         }
+                    }
+                    if (!added) {
+                        IngredientQty selectedIngredientQty = new IngredientQty(selectedIngredient, quantity);
+                        ingredientQtylist.add(selectedIngredientQty);
 
-                        ingredientQtyTable.setValueAt(i.getQty() + " " + i.stringType(), row, 2);
+                        Object[] newIngredientQtyRow = {selectedIngredientQty.getId(), selectedIngredientQty.getName(), selectedIngredientQty.getQty() + " " + selectedIngredientQty.stringType(), selectedIngredientQty.getTotKcal(), selectedIngredientQty.getType()};
+
+                        DefaultTableModel model = (DefaultTableModel) ingredientQtyTable.getModel();
+
+                        model.addRow(newIngredientQtyRow);
 
                         dispose();
-
-                        break;
                     }
                 }
-                if (!added) {
-                    IngredientQty selectedIngredientQty = new IngredientQty(selectedIngredient, quantity);
-                    ingredientQtylist.add(selectedIngredientQty);
-
-                    Object[] newIngredientQtyRow = {selectedIngredientQty.getId(), selectedIngredientQty.getName(), selectedIngredientQty.getQty() + " " + selectedIngredientQty.stringType(), selectedIngredientQty.getTotKcal(), selectedIngredientQty.getType()};
-
-                    DefaultTableModel model = (DefaultTableModel) ingredientQtyTable.getModel();
-
-                    model.addRow(newIngredientQtyRow);
-
-                    dispose();
-                }
+            } catch (ArrayIndexOutOfBoundsException exception) {
+                JOptionPane.showMessageDialog(null, "Inserisci un ingrediente valido");
             }
         }
 
