@@ -26,6 +26,7 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
     DefaultTableModel inventoryModel;
     JTable inventoryTable;
 
+    private JScrollPane scrollPanel;
     private JTextField searchBar;
 
     String selectedQty;
@@ -91,7 +92,7 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
         });
 
         inventoryTable = new JTable(inventoryModel);
-        JScrollPane scrollPanel = new JScrollPane(inventoryTable);
+        scrollPanel = new JScrollPane(inventoryTable);
 
         inventoryTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         inventoryTable.getColumnModel().getColumn(1).setPreferredWidth(750);
@@ -164,6 +165,28 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
             };
 
             inventoryTable.setModel(searchedIngredientsModel);
+
+
+            inventoryTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+            inventoryTable.getColumnModel().getColumn(1).setPreferredWidth(750);
+            inventoryTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+
+
+        }
+
+        if(e.getSource()==importButton){
+            new ImportShoppingFrame(shoppingList,inventoryList);
+
+            Object[][] transferedIngredientsMatrix = IngredientQty.toMatrix(inventoryList);
+
+            DefaultTableModel transferedIngredientsModel = new DefaultTableModel(transferedIngredientsMatrix, new String[]{"ID", "Nome", "Qty"}) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            inventoryTable.setModel(transferedIngredientsModel);
 
 
             inventoryTable.getColumnModel().getColumn(0).setPreferredWidth(150);
