@@ -3,10 +3,10 @@ package launchcode;
 import domainclasses.recipes.*;
 import graphicalinterface.*;
 
-import javax.swing.*;
-import java.util.ArrayList;
+import java.sql.SQLException;
 
 public class Main {
+
     public static void main(String[] args) {
 
         Ingredient a = new Ingredient();
@@ -29,7 +29,12 @@ public class Main {
         System.out.println(d);
         System.out.println(e);
 
-        new MainFrame();
+
+        try {
+        new MainFrame();}
+        catch (SQLException exception){
+            exception.printStackTrace();
+        }
     }
 
     public static int strtoint(String s) {

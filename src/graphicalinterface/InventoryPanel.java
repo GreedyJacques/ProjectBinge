@@ -86,7 +86,6 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
                     if (Qty > 0)
                         tmpIngredientQty.setQty(Qty);
                     inventoryTable.setValueAt(tmpIngredientQty.getQty() + " " + tmpIngredientQty.stringType(), selectedRow, 2);
-                    System.out.println(inventoryTable.getSelectedRow());
                 }
             }
         });
@@ -100,7 +99,7 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Inventario"));
 
-        /*ListSelectionModel selectionModel = inventoryTable.getSelectionModel();
+        ListSelectionModel selectionModel = inventoryTable.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -110,7 +109,7 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
                     selectedQty = (String) inventoryModel.getValueAt(row, 2);
                 }
             }
-        });*/
+        });
 
         add(new JLabel("Cerca:"), "right");
         add(searchBar, "");

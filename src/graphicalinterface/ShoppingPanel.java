@@ -3,11 +3,14 @@ package graphicalinterface;
 import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
+import launchcode.Main;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -68,6 +71,22 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
                     return true;
             }
         };
+
+        shoppingModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (shoppingTable.getSelectedRow() >= 0 && shoppingTable.getSelectedRow() < shoppingTable.getRowCount()) {
+                    int selectedRow = shoppingTable.getSelectedRow();
+                    shoppingTable.clearSelection();
+                    String newQty = (String) shoppingTable.getValueAt(selectedRow, 2);
+                    int Qty = Main.strtoint(newQty);
+                    IngredientQty tmpIngredientQty = IngredientQty.findIngredientQty(inventoryList, (int) shoppingTable.getValueAt(selectedRow, 0));
+                    if (Qty > 0)
+                        tmpIngredientQty.setQty(Qty);
+                    shoppingTable.setValueAt(tmpIngredientQty.getQty() + " " + tmpIngredientQty.stringType(), selectedRow, 2);
+                }
+            }
+        });
 
         shoppingTable = new JTable(shoppingModel);
         JScrollPane scrollPanel = new JScrollPane(shoppingTable);
