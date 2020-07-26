@@ -154,7 +154,7 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
 
             Object[][] recipeMatrix = Recipe.toMatrix(recipeList);
 
-            DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal", "T. Preparazione", "T. Cottura"}) {
+            DefaultTableModel recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
@@ -162,6 +162,13 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
             };
 
             recipeTable.setModel(recipeModel);
+
+            recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+            recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
+            recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+            recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+            recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+            recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
 
             callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame, ingredientList, shoppingList));
             callerFrame.revalidate();

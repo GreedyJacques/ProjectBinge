@@ -28,6 +28,15 @@ public class Recipe {
         this.cooktime = 0;
     }
 
+    public Recipe(int id, String name, String procedure, int preptime, int cooktime) {
+        this.id = id;
+        this.name = name;
+        this.ingredients = new ArrayList<IngredientQty>();
+        this.procedure = procedure;
+        this.preptime = preptime;
+        this.cooktime = cooktime;
+    }
+
     public int getId() {
         return id;
     }

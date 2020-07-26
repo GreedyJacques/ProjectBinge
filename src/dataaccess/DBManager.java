@@ -23,7 +23,7 @@ public class DBManager {
         connection = DriverManager.getConnection(JDBCURL);
         statement = connection.createStatement();
         statement.setQueryTimeout(30);
-        showMetadata();
+        //showMetadata();
     }
 
     public DBManager(String JDBCDriver, String JDBCURL, int resultSetType, int resultSetConcurrency)

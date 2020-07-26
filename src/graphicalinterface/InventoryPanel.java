@@ -174,7 +174,7 @@ public class InventoryPanel extends JPanel implements ActionListener, KeyListene
         }
 
         if(e.getSource()==importButton){
-            new ImportShoppingFrame(shoppingList,inventoryList);
+            new ImportShoppingFrame(shoppingList,inventoryList,ingredientList);
 
             Object[][] transferedIngredientsMatrix = IngredientQty.toMatrix(inventoryList);
 

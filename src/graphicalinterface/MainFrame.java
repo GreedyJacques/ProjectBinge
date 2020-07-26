@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Formatter;
+
+import static launchcode.Main.saveData;
 
 public class MainFrame extends JFrame implements ActionListener, ChangeListener {
 
@@ -34,11 +35,7 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
     JPanel inventorypanel;
 
     protected DBManager db;
-    protected ResultSet rsRecipeList;
-    protected ResultSet rsRecipeIngredientList;
-    protected ResultSet rsShoppingList;
-    protected ResultSet rsInventoryList;
-    protected ResultSet rsIngredientList;
+    protected ResultSet rs;
 
     public MainFrame() throws SQLException {
         super("Project Binge");
@@ -61,8 +58,23 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
             exception.printStackTrace();
         }
 
+        JDialog loadingDialog = new JDialog();
+        loadingDialog.setVisible(true);
+        loadingDialog.setLocation(800, 400);
+        loadingDialog.setAlwaysOnTop(true);
+        loadingDialog.setSize(250, 100);
+        JLabel loadingLabel = new JLabel("Caricamento dei Dati...");
+        loadingLabel.setHorizontalAlignment(JLabel.CENTER);
+        loadingLabel.setVerticalAlignment(JLabel.CENTER);
+        loadingDialog.add(loadingLabel);
+
+
+        long loadStartTime = System.nanoTime();
+
+        System.out.println("Loading Recipe List...(" + (System.nanoTime() - loadStartTime) / 1000000 + "ms)");
+
         try {
-            rsRecipeList = db.executeQuery("SELECT * FROM RecipeList");
+            rs = db.executeQuery("SELECT * FROM RecipeList");
         } catch (SQLException exception) {
             db.executeUpdate("CREATE TABLE RecipeList (" +
                     "id INTEGER PRIMARY KEY, " +
@@ -70,40 +82,43 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
                     "procedure VARCHAR(131072), " +
                     "preptime INTEGER, " +
                     "cooktime INTEGER)");
-            rsRecipeList = db.executeQuery("SELECT * FROM RecipeList");
+            rs = db.executeQuery("SELECT * FROM RecipeList");
         }
 
         recipeList = new ArrayList<>();
-        int recipeListIndex = 0;
 
-        while (rsRecipeList.next()) {
-            recipeList.add(new Recipe(rsRecipeList.getInt(1)));
-            recipeList.get(recipeListIndex).setName(rsRecipeList.getString(2));
-            recipeList.get(recipeListIndex).setProcedure(rsRecipeList.getString(3));
-            recipeList.get(recipeListIndex).setPreptime(rsRecipeList.getInt(4));
-            recipeList.get(recipeListIndex).setCooktime(rsRecipeList.getInt(5));
+        while (rs.next()) {
+            recipeList.add(new Recipe(rs.getInt(1), rs.getString(2),
+                    rs.getString(3), rs.getInt(4), rs.getInt(5)));
+
+        }
+
+        System.out.println("Loading Recipe Ingredients...(" + (System.nanoTime() - loadStartTime) / 1000000 + "ms)");
+
+        for (Recipe r : recipeList) {
             try {
-                rsRecipeIngredientList = db.executeQuery("SELECT * FROM Recipe" + recipeList.get(recipeListIndex).getId());
+                rs = db.executeQuery("SELECT * FROM Recipe" + r.getId());
             } catch (SQLException exception) {
-                db.executeUpdate("CREATE TABLE Recipe" + recipeList.get(recipeListIndex).getId() + " (" +
+                db.executeUpdate("CREATE TABLE Recipe" + r.getId() + " (" +
                         "id INTEGER PRIMARY KEY, " +
                         "name VARCHAR(256), " +
                         "type INTEGER, " +
                         "kcal DOUBLE, " +
                         "qty INTEGER)");
-                rsRecipeIngredientList = db.executeQuery("SELECT * FROM Recipe" + recipeList.get(recipeListIndex).getId());
+                rs = db.executeQuery("SELECT * FROM Recipe" + r.getId());
             }
-            while (rsRecipeIngredientList.next()) {
-                recipeList.get(recipeListIndex).getIngredients().add(new IngredientQty(new Ingredient(rsRecipeIngredientList.getInt(1),
-                        rsRecipeIngredientList.getString(2), rsRecipeIngredientList.getInt(3),
-                        rsRecipeIngredientList.getDouble(4)), rsRecipeIngredientList.getInt(5)));
+            while (rs.next()) {
+                r.getIngredients().add(new IngredientQty(new Ingredient(rs.getInt(1),
+                        rs.getString(2), rs.getInt(3),
+                        rs.getDouble(4)), rs.getInt(5)));
             }
+            System.out.println("Loaded Recipe " + r.getId() + " Ingredients(" + (System.nanoTime() - loadStartTime) / 1000000 + "ms)");
         }
 
-        shoppingList = new ArrayList<>();
+        System.out.println("Loading Shopping List...(" + (System.nanoTime() - loadStartTime) / 1000000 + "ms)");
 
         try {
-            rsShoppingList = db.executeQuery("SELECT * FROM ShoppingList");
+            rs = db.executeQuery("SELECT * FROM ShoppingList");
         } catch (SQLException exception) {
             db.executeUpdate("CREATE TABLE ShoppingList (" +
                     "id INTEGER PRIMARY KEY, " +
@@ -111,18 +126,20 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
                     "type INTEGER, " +
                     "kcal DOUBLE, " +
                     "qty INTEGER)");
-            rsShoppingList = db.executeQuery("SELECT * FROM ShoppingList");
+            rs = db.executeQuery("SELECT * FROM ShoppingList");
         }
 
-        while (rsShoppingList.next()) {
-            shoppingList.add(new IngredientQty(new Ingredient(rsShoppingList.getInt(1), rsShoppingList.getString(2),
-                    rsShoppingList.getInt(3), rsShoppingList.getDouble(4)), rsShoppingList.getInt(5)));
+        shoppingList = new ArrayList<>();
+
+        while (rs.next()) {
+            shoppingList.add(new IngredientQty(new Ingredient(rs.getInt(1), rs.getString(2),
+                    rs.getInt(3), rs.getDouble(4)), rs.getInt(5)));
         }
 
-        inventoryList = new ArrayList<>();
+        System.out.println("Loading Inventory List...(" + (System.nanoTime() - loadStartTime) / 1000000 + "ms)");
 
         try {
-            rsInventoryList = db.executeQuery("SELECT * FROM InventoryList");
+            rs = db.executeQuery("SELECT * FROM InventoryList");
         } catch (SQLException exception) {
             db.executeUpdate("CREATE TABLE InventoryList (" +
                     "id INTEGER PRIMARY KEY, " +
@@ -130,31 +147,37 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
                     "type INTEGER, " +
                     "kcal DOUBLE, " +
                     "qty INTEGER)");
-            rsInventoryList = db.executeQuery("SELECT * FROM InventoryList");
+            rs = db.executeQuery("SELECT * FROM InventoryList");
         }
 
-        while (rsInventoryList.next()) {
-            inventoryList.add(new IngredientQty(new Ingredient(rsInventoryList.getInt(1), rsInventoryList.getString(2),
-                    rsInventoryList.getInt(3), rsInventoryList.getDouble(4)), rsInventoryList.getInt(5)));
+        inventoryList = new ArrayList<>();
+
+        while (rs.next()) {
+            inventoryList.add(new IngredientQty(new Ingredient(rs.getInt(1), rs.getString(2),
+                    rs.getInt(3), rs.getDouble(4)), rs.getInt(5)));
         }
 
-        ingredientList = new ArrayList<>();
+        System.out.println("Loading Ingredient List...(" + (System.nanoTime() - loadStartTime) / 1000000 + "ms)");
 
         try {
-            rsIngredientList = db.executeQuery("SELECT * FROM IngredientList");
+            rs = db.executeQuery("SELECT * FROM IngredientList");
         } catch (SQLException exception) {
             db.executeUpdate("CREATE TABLE IngredientList (" +
                     "id INTEGER PRIMARY KEY, " +
                     "name VARCHAR(256), " +
                     "type INTEGER, " +
                     "kcal DOUBLE)");
-            rsIngredientList = db.executeQuery("SELECT * FROM IngredientList");
+            rs = db.executeQuery("SELECT * FROM IngredientList");
         }
 
-        while (rsIngredientList.next()) {
-            ingredientList.add(new Ingredient(rsIngredientList.getInt(1), rsIngredientList.getString(2),
-                    rsIngredientList.getInt(3), rsIngredientList.getDouble(4)));
+        ingredientList = new ArrayList<>();
+
+        while (rs.next()) {
+            ingredientList.add(new Ingredient(rs.getInt(1), rs.getString(2),
+                    rs.getInt(3), rs.getDouble(4)));
         }
+
+        loadingDialog.dispose();
 
         mainpanel = new JTabbedPane();
         recipepanel = new RecipePanel(recipeList, ingredientList, shoppingList, inventoryList);
@@ -190,143 +213,24 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
             @Override
             public void windowClosing(WindowEvent e) {
 
-                System.out.println("ci sono");
+                JDialog savingDialog = new JDialog();
+                savingDialog.setLocation(800, 400);
+                savingDialog.setAlwaysOnTop(true);
+                savingDialog.setSize(250, 100);
+                JLabel savingLabel = new JLabel("Salvataggio dei Dati...");
+                savingLabel.setHorizontalAlignment(JLabel.CENTER);
+                savingLabel.setVerticalAlignment(JLabel.CENTER);
+                savingDialog.add(savingLabel);
+                savingDialog.setVisible(true);
 
-                for (Recipe r : recipeList) {
-                    try {
-                        db.executeUpdate("DROP TABLE IF EXISTS Recipe" + r.getId());
-                    } catch (SQLException exception) {
-                        exception.printStackTrace();
+                Runnable saveRunnableClose = new Runnable() {
+                    @Override
+                    public void run() {
+                        saveData(recipeList, ingredientList, shoppingList, inventoryList, db, true);
                     }
-                }
-                try {
-                    db.executeUpdate("DROP TABLE RecipeList");
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-                try {
-                    db.executeUpdate("DROP TABLE ShoppingList");
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-                try {
-                    db.executeUpdate("DROP TABLE InventoryList");
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-                try {
-                    db.executeUpdate("DROP TABLE IngredientList");
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
+                };
 
-                try {
-                    db.executeUpdate("CREATE TABLE RecipeList (" +
-                            "id INTEGER PRIMARY KEY, " +
-                            "name VARCHAR(256), " +
-                            "procedure VARCHAR(131072), " +
-                            "preptime INTEGER, " +
-                            "cooktime INTEGER)");
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-                try {
-                    db.executeUpdate("CREATE TABLE ShoppingList (" +
-                            "id INTEGER PRIMARY KEY, " +
-                            "name VARCHAR(256), " +
-                            "type INTEGER, " +
-                            "kcal DOUBLE, " +
-                            "qty INTEGER)");
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-                try {
-                    db.executeUpdate("CREATE TABLE InventoryList (" +
-                            "id INTEGER PRIMARY KEY, " +
-                            "name VARCHAR(256), " +
-                            "type INTEGER, " +
-                            "kcal DOUBLE, " +
-                            "qty INTEGER)");
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-                try {
-                    db.executeUpdate("CREATE TABLE IngredientList (" +
-                            "id INTEGER PRIMARY KEY, " +
-                            "name VARCHAR(256), " +
-                            "type INTEGER, " +
-                            "kcal DOUBLE)");
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-
-                Formatter formatter;
-
-                for (Recipe r : recipeList) {
-                    formatter = new Formatter(new StringBuilder());
-                    formatter.format("INSERT INTO RecipeList (id, name, procedure, preptime, cooktime) VALUES ('%d' ,'%s', '%s', '%d', '%d')",
-                            r.getId(), r.getName(), r.getProcedure(), r.getPreptime(), r.getCooktime());
-                    try {
-                        db.executeUpdate(formatter.toString());
-                    } catch (SQLException exception) {
-                        exception.printStackTrace();
-                    }
-                    try {
-                        db.executeUpdate("CREATE TABLE Recipe" + r.getId() + " (" +
-                                "id INTEGER PRIMARY KEY, " +
-                                "name VARCHAR(256), " +
-                                "type INTEGER, " +
-                                "kcal DOUBLE, " +
-                                "qty INTEGER)");
-                    } catch (SQLException exception) {
-                        exception.printStackTrace();
-                    }
-                    for (IngredientQty i : r.getIngredients()) {
-                        formatter = new Formatter(new StringBuilder());
-                        formatter.format("INSERT INTO Recipe'%d' (id, name, type, kcal, qty) VALUES ('%d', '%s', '%d', '%f', '%d')",
-                                r.getId(), i.getId(), i.getName(), i.getType(), i.getKcal(), i.getQty());
-                        try {
-                            db.executeUpdate(formatter.toString());
-                        } catch (SQLException exception) {
-                            exception.printStackTrace();
-                        }
-                    }
-                }
-
-                for (IngredientQty i : shoppingList) {
-                    formatter = new Formatter(new StringBuilder());
-                    formatter.format("INSERT INTO ShoppingList (id, name, type, kcal, qty) VALUES ('%d', '%s', '%d', '%f', '%d')",
-                            i.getId(), i.getName(), i.getType(), i.getKcal(), i.getQty());
-                    try {
-                        db.executeUpdate(formatter.toString());
-                    } catch (SQLException exception) {
-                        exception.printStackTrace();
-                    }
-                }
-
-                for (IngredientQty i : inventoryList) {
-                    formatter = new Formatter(new StringBuilder());
-                    formatter.format("INSERT INTO InventoryList (id, name, type, kcal, qty) VALUES ('%d', '%s', '%d', '%f', '%d')",
-                            i.getId(), i.getName(), i.getType(), i.getKcal(), i.getQty());
-                    try {
-                        db.executeUpdate(formatter.toString());
-                    } catch (SQLException exception) {
-                        exception.printStackTrace();
-                    }
-                }
-
-                for (Ingredient i : ingredientList) {
-                    formatter = new Formatter(new StringBuilder());
-                    formatter.format("INSERT INTO IngredientList (id, name, type, kcal) VALUES ('%d', '%s', '%d', '%f')",
-                            i.getId(), i.getName(), i.getType(), i.getKcal());
-                    try {
-                        db.executeUpdate(formatter.toString());
-                    } catch (SQLException exception) {
-                        exception.printStackTrace();
-                    }
-                }
-
-                System.exit(0);
+                SwingUtilities.invokeLater(saveRunnableClose);
             }
         });
     }
