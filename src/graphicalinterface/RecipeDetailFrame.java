@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class RecipeDetailFrame extends JFrame {
-    public RecipeDetailFrame(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList) {
+    public RecipeDetailFrame(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ShoppingPanel shoppingPanel) {
         super(recipe.getName());
         try {
             setIconImage(ImageIO.read(new File("icons/icon.png")));
@@ -28,9 +28,9 @@ public class RecipeDetailFrame extends JFrame {
         }
         /* JFrame methods called */
         if (newrecipe)
-            setContentPane(new RecipeDetailPanelModifiable(recipe, true, recipeList, recipeTable, this, ingredientList, shoppingList));
+            setContentPane(new RecipeDetailPanelModifiable(recipe, true, recipeList, recipeTable, this, ingredientList, shoppingList, shoppingPanel));
         else
-            setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, this, ingredientList, shoppingList));
+            setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, this, ingredientList, shoppingList, shoppingPanel));
         setLocation(400, 230);
         setSize(1000, 600);
         setVisible(true);

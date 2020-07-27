@@ -7,8 +7,6 @@ import launchcode.Main;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -19,19 +17,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class ShoppingPanel extends JPanel implements ActionListener, KeyListener {
+public class ShoppingPanel extends JPanel implements ActionListener, KeyListener, TablePanel {
     private JButton addButton, removeButton,
             exportButton, addFromRecipeButton, searchButton;
 
     DefaultTableModel shoppingModel;
     JTable shoppingTable;
 
-    private JFrame exportFrame;
-
     private JTextField searchBar;
-
-    String selectedQty;
-    Object selectedIngredient;
 
     ArrayList<Recipe> recipeList;
     ArrayList<Ingredient> ingredientList;
@@ -60,54 +53,11 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
         addFromRecipeButton.addActionListener(this);
         searchBar.addKeyListener(this);
 
-        Object[][] shoppingMatrix = IngredientQty.toMatrix(shoppingList);
-
-        shoppingModel = new DefaultTableModel(shoppingMatrix, new String[]{"ID", "Nome", "Qty"}) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                if (column == 0 || column == 1)
-                    return false;
-                else
-                    return true;
-            }
-        };
-
-        shoppingModel.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                if (shoppingTable.getSelectedRow() >= 0 && shoppingTable.getSelectedRow() < shoppingTable.getRowCount()) {
-                    int selectedRow = shoppingTable.getSelectedRow();
-                    shoppingTable.clearSelection();
-                    String newQty = (String) shoppingTable.getValueAt(selectedRow, 2);
-                    int Qty = Main.strtoint(newQty);
-                    IngredientQty tmpIngredientQty = IngredientQty.findIngredientQty(shoppingList, (int) shoppingTable.getValueAt(selectedRow, 0));
-                    if (Qty > 0)
-                        tmpIngredientQty.setQty(Qty);
-                    shoppingTable.setValueAt(tmpIngredientQty.getQty() + " " + tmpIngredientQty.stringType(), selectedRow, 2);
-                }
-            }
-        });
-
-        shoppingTable = new JTable(shoppingModel);
+        shoppingTable = new JTable();
         JScrollPane scrollPanel = new JScrollPane(shoppingTable);
-
-        shoppingTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-        shoppingTable.getColumnModel().getColumn(1).setPreferredWidth(750);
-        shoppingTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+        redrawTable(shoppingList);
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Lista Spesa"));
-
-        ListSelectionModel selectionModel = shoppingTable.getSelectionModel();
-        selectionModel.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!selectionModel.isSelectionEmpty()) {
-                    int row = shoppingTable.getSelectedRow();
-                    selectedIngredient = shoppingModel.getValueAt(row, 1);
-                    selectedQty = (String) shoppingModel.getValueAt(row, 2);
-                }
-            }
-        });
 
         addButton.setPreferredSize(new Dimension(175, 50));
         removeButton.setPreferredSize(new Dimension(175, 50));
@@ -129,70 +79,45 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
         shoppingTable.setAutoCreateRowSorter(true);
     }
 
-    static String getShoppingIngredient(ArrayList<IngredientQty> shoppingList){
+    static String getShoppingIngredient(ArrayList<IngredientQty> shoppingList) {
         String out = new String();
-        for(IngredientQty i : shoppingList){
-            out += i.getQty() + i.stringType()+" "+ i.getName() + '\n';
+        for (IngredientQty i : shoppingList) {
+            out += i.getQty() + i.stringType() + " " + i.getName() + '\n';
 
         }
         return out;
     }
 
-
-    static ArrayList<IngredientQty> findSearchedIngredientsQty(String searchedThing, ArrayList<IngredientQty> filteredIngredientsList) {
-        ArrayList<IngredientQty> out = new ArrayList<>();
-        for (IngredientQty r : filteredIngredientsList) {
-            if (r.getName().toLowerCase().contains(searchedThing.toLowerCase()))
-                out.add(r);
-        }
-        return out;
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addButton) {
-            new ExistingIngredientPanel(shoppingList, shoppingTable, ingredientList);
+            new ExistingIngredientPanel(shoppingList, this, ingredientList);
         }
         if (e.getSource() == removeButton) {
-            if (selectedIngredient != null) {
+            if (shoppingTable.getSelectedRow()>= 0 && shoppingTable.getSelectedRow()<shoppingTable.getRowCount()) {
                 int row = shoppingTable.getSelectedRow();
                 int selectedId = (int) shoppingTable.getValueAt(row, 0);
                 shoppingList.remove(IngredientQty.findIngredientQty(shoppingList, selectedId));
-                shoppingModel.removeRow(row);
-                selectedIngredient = null;
+                redrawTable(shoppingList);
+                shoppingTable.clearSelection();
             }
         }
         if (e.getSource() == exportButton) {
-          new ExportFrame(shoppingList);
+            new ExportFrame(shoppingList);
 
 
         }
         if (e.getSource() == addFromRecipeButton) {
-            new AddFromRecipeFrame(recipeList,shoppingList,shoppingTable,ingredientList);
+            new AddFromRecipeFrame(recipeList, shoppingList, ingredientList, this, -1, 1);
 
         }
         if (e.getSource() == searchButton) {
 
             String searchedThing = searchBar.getText();
-            ArrayList<IngredientQty> searchedIngredientsList = new ArrayList<>(findSearchedIngredientsQty(searchedThing, shoppingList));
+            ArrayList<IngredientQty> searchedIngredientsList = new ArrayList<>(IngredientQty.findSearchedIngredientQty(searchedThing, shoppingList));
 
-            Object[][] searchedIngredientsMatrix = IngredientQty.toMatrix(searchedIngredientsList);
-
-            DefaultTableModel searchedIngredientsModel = new DefaultTableModel(searchedIngredientsMatrix, new String[]{"ID", "Nome", "Qty"}) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-
-            shoppingTable.setModel(searchedIngredientsModel);
-
-
-            shoppingTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-            shoppingTable.getColumnModel().getColumn(1).setPreferredWidth(750);
-            shoppingTable.getColumnModel().getColumn(2).setPreferredWidth(750);
-
-
+            redrawTable(searchedIngredientsList);
         }
     }
 
@@ -207,23 +132,9 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
             String searchedThing = searchBar.getText();
 
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                ArrayList<IngredientQty> searchedIngredientsList = new ArrayList<>(findSearchedIngredientsQty(searchedThing, shoppingList));
+                ArrayList<IngredientQty> searchedIngredientsList = new ArrayList<>(IngredientQty.findSearchedIngredientQty(searchedThing, shoppingList));
 
-                Object[][] searchedIngredientsMatrix = IngredientQty.toMatrix(searchedIngredientsList);
-
-                DefaultTableModel searchedIngredientsModel = new DefaultTableModel(searchedIngredientsMatrix, new String[]{"ID", "Nome", "Qty"}) {
-                    @Override
-                    public boolean isCellEditable(int row, int column) {
-                        return false;
-                    }
-                };
-
-                shoppingTable.setModel(searchedIngredientsModel);
-
-
-                shoppingTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-                shoppingTable.getColumnModel().getColumn(1).setPreferredWidth(750);
-                shoppingTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+                redrawTable(searchedIngredientsList);
 
             }
         }
@@ -232,5 +143,42 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    @Override
+    public void redrawTable(ArrayList<IngredientQty> ingredientQtyList) {
+        Object[][] ingredientsMatrix = IngredientQty.toMatrix(ingredientQtyList);
+
+        DefaultTableModel ingredientsModel = new DefaultTableModel(ingredientsMatrix, new String[]{"ID", "Nome", "Qty"}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0 || column == 1)
+                    return false;
+                else
+                    return true;
+            }
+        };
+
+        shoppingTable.setModel(ingredientsModel);
+
+        shoppingTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        shoppingTable.getColumnModel().getColumn(1).setPreferredWidth(750);
+        shoppingTable.getColumnModel().getColumn(2).setPreferredWidth(750);
+
+        ingredientsModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (shoppingTable.getSelectedRow() >= 0 && shoppingTable.getSelectedRow() < shoppingTable.getRowCount()) {
+                    int selectedRow = shoppingTable.getSelectedRow();
+                    shoppingTable.clearSelection();
+                    String newQty = (String) shoppingTable.getValueAt(selectedRow, 2);
+                    int Qty = Main.strtoint(newQty);
+                    IngredientQty tmpIngredientQty = IngredientQty.findIngredientQty(ingredientQtyList, (int) shoppingTable.getValueAt(selectedRow, 0));
+                    if (Qty > 0)
+                        tmpIngredientQty.setQty(Qty);
+                    shoppingTable.setValueAt(tmpIngredientQty.getQty() + " " + tmpIngredientQty.stringType(), selectedRow, 2);
+                }
+            }
+        });
     }
 }

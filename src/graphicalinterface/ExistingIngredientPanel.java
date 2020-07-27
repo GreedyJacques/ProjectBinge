@@ -7,7 +7,6 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,10 +27,10 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
     String[] ingredientStrings;
 
     private ArrayList<IngredientQty> ingredientQtylist;
-    private JTable ingredientQtyTable;
+    private TablePanel callerPanel;
     private ArrayList<Ingredient> ingredientList;
 
-    public ExistingIngredientPanel(ArrayList<IngredientQty> ingredientQtylist, JTable ingredientQtyTable, ArrayList<Ingredient> ingredientList) {
+    public ExistingIngredientPanel(ArrayList<IngredientQty> ingredientQtylist, TablePanel callerPanel, ArrayList<Ingredient> ingredientList) {
         super("Aggiungi Ingrediente");
 
         try {
@@ -41,7 +40,7 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
         }
 
         this.ingredientQtylist = ingredientQtylist;
-        this.ingredientQtyTable = ingredientQtyTable;
+        this.callerPanel = callerPanel;
         this.ingredientList = ingredientList;
 
         mainpanel = new JPanel(new MigLayout("fill, wrap 2", "[grow, fill][]", "[][][][][][][][]"));
@@ -125,7 +124,7 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Inserisci la quantita'");
                     correct = false;
                 }
-                if(quantity<=0){
+                if (quantity <= 0) {
                     JOptionPane.showMessageDialog(null, "Inserisci una quantita' positiva");
                     correct = false;
                 }
@@ -139,14 +138,7 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
 
                             int row = 0;
 
-                            while (row < ingredientQtyTable.getRowCount()) {
-                                if ((int) ingredientQtyTable.getValueAt(row, 0) == selectedIngredient.getId())
-                                    break;
-                                else
-                                    row++;
-                            }
-
-                            ingredientQtyTable.setValueAt(i.getQty() + " " + i.stringType(), row, 2);
+                            callerPanel.redrawTable(ingredientQtylist);
 
                             dispose();
 
@@ -157,11 +149,7 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
                         IngredientQty selectedIngredientQty = new IngredientQty(selectedIngredient, quantity);
                         ingredientQtylist.add(selectedIngredientQty);
 
-                        Object[] newIngredientQtyRow = {selectedIngredientQty.getId(), selectedIngredientQty.getName(), selectedIngredientQty.getQty() + " " + selectedIngredientQty.stringType(), selectedIngredientQty.getTotKcal(), selectedIngredientQty.getType()};
-
-                        DefaultTableModel model = (DefaultTableModel) ingredientQtyTable.getModel();
-
-                        model.addRow(newIngredientQtyRow);
+                        callerPanel.redrawTable(ingredientQtylist);
 
                         dispose();
                     }
@@ -175,7 +163,7 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
             int newIngredientID = (Ingredient.getMaxId(ingredientList)) + 1;
             Ingredient newIngredient = new Ingredient(newIngredientID, "", 0, -1);
             IngredientQty newIngredientQty = new IngredientQty(newIngredient, 0);
-            new NewIngredientPanel(newIngredientQty, ingredientQtylist, ingredientQtyTable, ingredientList, this);
+            new NewIngredientPanel(newIngredientQty, ingredientQtylist, callerPanel, ingredientList, this);
         }
     }
 }

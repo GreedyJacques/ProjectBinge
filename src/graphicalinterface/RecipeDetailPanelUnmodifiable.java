@@ -35,8 +35,9 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
     private RecipeDetailFrame callerFrame;
     ArrayList<Ingredient> ingredientList;
     ArrayList<IngredientQty> shoppingList;
+    ShoppingPanel shoppingPanel;
 
-    public RecipeDetailPanelUnmodifiable(Recipe recipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList) {
+    public RecipeDetailPanelUnmodifiable(Recipe recipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ShoppingPanel shoppingPanel) {
         super(new MigLayout("fill, wrap 4", "[grow,fill][200,grow,fill][300,grow,fill][]", "[][][grow,fill][][][][]"));
         this.recipe = recipe;
         this.recipeList = recipeList;
@@ -44,6 +45,7 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
         this.callerFrame = callerFrame;
         this.ingredientList = ingredientList;
         this.shoppingList = shoppingList;
+        this.shoppingPanel = shoppingPanel;
 
         Object[][] ingredientMatrix = IngredientQty.toMatrix(recipe.getIngredients());
 
@@ -148,7 +150,7 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == modifyButton) {
-            callerFrame.setContentPane(new RecipeDetailPanelModifiable(recipe, false, recipeList, recipeTable, callerFrame, ingredientList, shoppingList));
+            callerFrame.setContentPane(new RecipeDetailPanelModifiable(recipe, false, recipeList, recipeTable, callerFrame, ingredientList, shoppingList, shoppingPanel));
             callerFrame.revalidate();
             callerFrame.repaint();
         }
@@ -177,7 +179,7 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
             callerFrame.dispose();
         }
         if (e.getSource() == addShoppingButton) {
-
+            new AddFromRecipeFrame(recipeList,shoppingList,ingredientList,shoppingPanel,recipe.getId(),Integer.parseInt(portionsUnmodifiableValue.getText()));
         }
     }
 }

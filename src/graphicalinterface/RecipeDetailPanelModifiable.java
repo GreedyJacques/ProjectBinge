@@ -3,18 +3,19 @@ package graphicalinterface;
 import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
+import launchcode.Main;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class RecipeDetailPanelModifiable extends JPanel implements ActionListener {
+public class RecipeDetailPanelModifiable extends JPanel implements ActionListener, TablePanel {
 
     private JTextField nameModifiable; //1
     private JLabel portionsModifiable; //3
@@ -40,10 +41,9 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
     ArrayList<Ingredient> ingredientList;
     ArrayList<IngredientQty> shoppingList;
     DefaultTableModel ingredientModelModifiable;
-    String selectedQty;
-    Object selectedIngredient;
+    ShoppingPanel shoppingPanel;
 
-    public RecipeDetailPanelModifiable(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList) {
+    public RecipeDetailPanelModifiable(Recipe recipe, boolean newrecipe, ArrayList<Recipe> recipeList, JTable recipeTable, RecipeDetailFrame callerFrame, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ShoppingPanel shoppingPanel) {
         super(new MigLayout("fill, wrap 5", "[grow,fill][grow,fill][200,grow,fill][300,grow,fill][]", "[][][grow,fill][][][]"));
 
 
@@ -54,27 +54,12 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
         this.callerFrame = callerFrame;
         this.ingredientList = ingredientList;
         this.shoppingList = shoppingList;
+        this.shoppingPanel = shoppingPanel;
 
         ingredientListNew = (ArrayList) recipe.getIngredients().clone();
+        ingredientsTableModifiable = new JTable();
 
-        Object[][] ingredientMatrixNew = IngredientQty.toMatrix(ingredientListNew);
-
-        ingredientModelModifiable = new DefaultTableModel(ingredientMatrixNew, new String[]{"Id", "Nome", "Qta", "kCal"}) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                if (column == 2)
-                    return true;
-                else
-                    return false;
-            }
-        };
-
-        ingredientsTableModifiable = new JTable(ingredientModelModifiable);
-
-        ingredientsTableModifiable.getColumnModel().getColumn(0).setPreferredWidth(40);
-        ingredientsTableModifiable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        ingredientsTableModifiable.getColumnModel().getColumn(2).setPreferredWidth(50);
-        ingredientsTableModifiable.getColumnModel().getColumn(3).setPreferredWidth(50);
+        redrawTable(ingredientListNew);
 
         nameModifiable = new JTextField(recipe.getName()); //1
         portionsModifiable = new JLabel("Ingredienti per 1 porzione:"); //3
@@ -125,18 +110,6 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
 
         procedureTextModifiable.setLineWrap(true);
 
-        ListSelectionModel selectionModel = ingredientsTableModifiable.getSelectionModel();
-        selectionModel.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!selectionModel.isSelectionEmpty()) {
-                    int row = ingredientsTableModifiable.getSelectedRow();
-                    selectedIngredient = ingredientModelModifiable.getValueAt(row, 1);
-                    selectedQty = (String) ingredientsTableModifiable.getValueAt(row, 2);
-                }
-            }
-        });
-
         ingredientsTableModifiable.setAutoCreateRowSorter(true);
     }
 
@@ -170,7 +143,7 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
             recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
             recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
 
-            callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame, ingredientList, shoppingList));
+            callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame, ingredientList, shoppingList, shoppingPanel));
             callerFrame.revalidate();
             callerFrame.repaint();
         }
@@ -178,22 +151,60 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
             if (newrecipe)
                 callerFrame.dispose();
             else {
-                callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame, ingredientList, shoppingList));
+                callerFrame.setContentPane(new RecipeDetailPanelUnmodifiable(recipe, recipeList, recipeTable, callerFrame, ingredientList, shoppingList, shoppingPanel));
                 callerFrame.revalidate();
                 callerFrame.repaint();
             }
         }
         if (e.getSource() == addIngredientButton) {
-            new ExistingIngredientPanel(ingredientListNew, ingredientsTableModifiable, ingredientList);
+            new ExistingIngredientPanel(ingredientListNew, this, ingredientList);
         }
         if (e.getSource() == removeIngredientButton) {
-            if (selectedIngredient != null) {
+            if (ingredientsTableModifiable.getSelectedRow()>= 0 && ingredientsTableModifiable.getSelectedRow()<ingredientsTableModifiable.getRowCount()) {
                 int row = ingredientsTableModifiable.getSelectedRow();
                 int selectedId = (int) ingredientsTableModifiable.getValueAt(row, 0);
                 ingredientListNew.remove(IngredientQty.findIngredientQty(ingredientListNew, selectedId));
-                ingredientModelModifiable.removeRow(row);
-                selectedIngredient = null;
+                redrawTable(ingredientListNew);
+                ingredientsTableModifiable.clearSelection();
             }
         }
+    }
+
+    @Override
+    public void redrawTable(ArrayList<IngredientQty> ingredientQtyList) {
+        Object[][] ingredientMatrixNew = IngredientQty.toMatrix(ingredientQtyList);
+
+        ingredientModelModifiable = new DefaultTableModel(ingredientMatrixNew, new String[]{"Id", "Nome", "Qta", "kCal"}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 2)
+                    return true;
+                else
+                    return false;
+            }
+        };
+
+        ingredientsTableModifiable.setModel(ingredientModelModifiable);
+
+        ingredientsTableModifiable.getColumnModel().getColumn(0).setPreferredWidth(40);
+        ingredientsTableModifiable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        ingredientsTableModifiable.getColumnModel().getColumn(2).setPreferredWidth(50);
+        ingredientsTableModifiable.getColumnModel().getColumn(3).setPreferredWidth(50);
+
+        ingredientModelModifiable.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if(ingredientsTableModifiable.getSelectedRow()>= 0 && ingredientsTableModifiable.getSelectedRow()<ingredientsTableModifiable.getRowCount()){
+                    int selectedRow = ingredientsTableModifiable.getSelectedRow();
+                    ingredientsTableModifiable.clearSelection();
+                    String newQty = (String) ingredientsTableModifiable.getValueAt(selectedRow, 2);
+                    int Qty = Main.strtoint(newQty);
+                    IngredientQty tmpIngredientQty = IngredientQty.findIngredientQty(ingredientQtyList, (int) ingredientsTableModifiable.getValueAt(selectedRow, 0));
+                    if (Qty > 0)
+                        tmpIngredientQty.setQty(Qty);
+                    ingredientsTableModifiable.setValueAt(tmpIngredientQty.getQty() + " " + tmpIngredientQty.stringType(), selectedRow, 2);
+                }
+            }
+        });
     }
 }

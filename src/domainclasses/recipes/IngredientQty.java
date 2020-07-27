@@ -49,6 +49,15 @@ public class IngredientQty extends Ingredient {
         return new IngredientQty();
     }
 
+    public static ArrayList<IngredientQty> findSearchedIngredientQty(String searchedString, ArrayList<IngredientQty> ingredientQtyList){
+        ArrayList<IngredientQty> out = new ArrayList<>();
+        for (IngredientQty r : ingredientQtyList) {
+            if (r.getName().toLowerCase().contains(searchedString.toLowerCase()))
+                out.add(r);
+        }
+        return out;
+    }
+
     @Override
     public String toString() {
         return "IngredientQty{" +

@@ -27,11 +27,11 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
 
     private IngredientQty newIngredientQty;
     private ArrayList<IngredientQty> ingredientQtylist;
-    private JTable ingredientQtyTable;
+    private TablePanel callerPanel;
     private ArrayList<Ingredient> ingredientList;
     private ExistingIngredientPanel callerFrame;
 
-    public NewIngredientPanel(IngredientQty newIngredientQty, ArrayList<IngredientQty> ingredientQtylist, JTable ingredientQtyTable, ArrayList<Ingredient> ingredientList, ExistingIngredientPanel callerFrame) {
+    public NewIngredientPanel(IngredientQty newIngredientQty, ArrayList<IngredientQty> ingredientQtylist, TablePanel callerPanel, ArrayList<Ingredient> ingredientList, ExistingIngredientPanel callerFrame) {
         super("Nuovo Ingrediente");
         try {
             setIconImage(ImageIO.read(new File("icons/icon.png")));
@@ -42,7 +42,7 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
 
         this.newIngredientQty = newIngredientQty;
         this.ingredientQtylist = ingredientQtylist;
-        this.ingredientQtyTable = ingredientQtyTable;
+        this.callerPanel = callerPanel;
         this.ingredientList = ingredientList;
         this.callerFrame = callerFrame;
 
@@ -132,11 +132,7 @@ public class NewIngredientPanel extends JFrame implements ActionListener {
                 ingredientList.add(new Ingredient(newIngredientQty.getId(),newIngredientQty.getName(),newIngredientQty.getType(),newIngredientQty.getKcal()));
                 ingredientQtylist.add(newIngredientQty);
 
-                Object[] newIngredientQtyRow = {newIngredientQty.getId(),newIngredientQty.getName(),newIngredientQty.getQty() + " " + newIngredientQty.stringType(), newIngredientQty.getTotKcal(), newIngredientQty.getType()};
-
-                DefaultTableModel model = (DefaultTableModel) ingredientQtyTable.getModel();
-
-                model.addRow(newIngredientQtyRow);
+                callerPanel.redrawTable(ingredientQtylist);
 
                 callerFrame.dispose();
                 dispose();

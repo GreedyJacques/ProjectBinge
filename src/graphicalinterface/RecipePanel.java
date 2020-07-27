@@ -32,13 +32,15 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
     ArrayList<Ingredient> ingredientList;
     ArrayList<IngredientQty> shoppingList;
     ArrayList<IngredientQty> inventoryList;
+    ShoppingPanel shoppingPanel;
 
-    public RecipePanel(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList) {
+    public RecipePanel(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList, ShoppingPanel shoppingPanel) {
         super(new MigLayout("fill, wrap 3", "50[][grow,fill]20[]", "50[][]20[grow,fill][]150[][][]50"));
         this.recipeList = recipeList;
         this.ingredientList = ingredientList;
         this.shoppingList = shoppingList;
         this.inventoryList = inventoryList;
+        this.shoppingPanel = shoppingPanel;
 
         addButton = new JButton("AGGIUNGI");
         removeButton = new JButton("RIMUOVI");
@@ -155,7 +157,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
         if (e.getSource() == addButton) {
             Recipe newRecipe = new Recipe(Recipe.getMaxId(recipeList) + 1);
-            new RecipeDetailFrame(newRecipe, true, recipeList, recipeTable, ingredientList, shoppingList);
+            new RecipeDetailFrame(newRecipe, true, recipeList, recipeTable, ingredientList, shoppingList, shoppingPanel);
             //TODO
         }
 
@@ -171,7 +173,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
 
         if (e.getSource() == openButton) {
             if (selectedRecipe != null)
-                new RecipeDetailFrame(selectedRecipe, false, recipeList, recipeTable, ingredientList, shoppingList);
+                new RecipeDetailFrame(selectedRecipe, false, recipeList, recipeTable, ingredientList, shoppingList, shoppingPanel);
             else
                 return;
         }

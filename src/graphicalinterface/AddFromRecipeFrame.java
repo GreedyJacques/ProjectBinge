@@ -3,14 +3,11 @@ package graphicalinterface;
 import domainclasses.recipes.Ingredient;
 import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
-import launchcode.Main;
 import net.miginfocom.swing.MigLayout;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,8 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class AddFromRecipeFrame extends JFrame implements ActionListener {
-
-    private JCheckBox recipeBox;
 
     private JPanel mainpanel, boxPanel;
 
@@ -31,9 +26,12 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
     private ArrayList<Recipe> recipeList;
     private ArrayList<IngredientQty> shoppingList;
     private ArrayList<Ingredient> ingredientList;
-    private JTable shoppingTable;
+    private TablePanel callerPanel;
+    private int recipeID;
+    private int portions;
 
     private JComboBox recipeName;
+    private JTextField portionField;
 
     private String[] recipeStrings;
 
@@ -41,7 +39,7 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
     private ArrayList<JCheckBox> boxList;
     private ArrayList<JTextField> fieldList;
 
-    public AddFromRecipeFrame(ArrayList<Recipe> recipeList, ArrayList<IngredientQty> shoppingList, JTable shoppingTable, ArrayList<Ingredient> ingredientList) {
+    public AddFromRecipeFrame(ArrayList<Recipe> recipeList, ArrayList<IngredientQty> shoppingList, ArrayList<Ingredient> ingredientList, TablePanel callerPanel, int recipeID, int portions) {
         super("Importa da Ricetta");
 
         try {
@@ -53,13 +51,15 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
         this.recipeList = recipeList;
         this.shoppingList = shoppingList;
         this.ingredientList = ingredientList;
-        this.shoppingTable = shoppingTable;
+        this.callerPanel = callerPanel;
+        this.recipeID = recipeID;
+        this.portions = portions;
 
-        mainpanel = new JPanel(new MigLayout("fill, wrap 1", "[]", "[][][grow,fill][]"));
-        boxPanel = new JPanel(new MigLayout("wrap 3, gapy 0", "5[130, grow, fill]10[50, fill]10[]20", ""));
+        mainpanel = new JPanel(new MigLayout("fill, wrap 3", "[][30][grow,fill]", "[][][grow,fill][]"));
+        boxPanel = new JPanel(new MigLayout("wrap 3, gapy 0", "5[130, grow, fill]10[50, fill]10[15]10", ""));
         addButton = new JButton("AGGIUNGI");
 
-        addButton.setPreferredSize(new Dimension(150, 75));
+        addButton.setPreferredSize(new Dimension(150, 50));
         scrollPanel = new JScrollPane(boxPanel);
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Lista Ingredienti"));
@@ -74,23 +74,87 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
         recipeName = new JComboBox(recipeStrings);
 
         AutoCompletion.enable(recipeName);
-        recipeName.setSelectedIndex(-1);
 
+        if (recipeID == -1)
+            recipeName.setSelectedIndex(-1);
+        else {
+            for (int s = 0; s < recipeStrings.length; ++s) {
+                if (recipeID == idFromString(recipeStrings[s])) {
+                    try {
+                        boxPanel = new JPanel(new MigLayout("wrap 3, gapy 0", "5[130, grow, fill]10[50, fill]10[15]10", ""));
+                        scrollPanel.setViewportView(boxPanel);
+                        selectedRecipe = Recipe.findRecipe(recipeList, recipeID);
+                        boxList = new ArrayList<>();
+                        fieldList = new ArrayList<>();
+
+                        for (int i = 0; i < selectedRecipe.getIngredients().size(); ++i) {
+                            boxList.add(new JCheckBox(selectedRecipe.getIngredients().get(i).getName()));
+                            boxList.get(i).setSelected(true);
+                            fieldList.add(new JTextField());
+                            fieldList.get(i).setText(String.valueOf(selectedRecipe.getIngredients().get(i).getQty() * portions));
+
+                            boxPanel.add(boxList.get(i));
+                            boxPanel.add(fieldList.get(i), "grow");
+                            boxPanel.add(new JLabel(selectedRecipe.getIngredients().get(i).stringType()));
+                        }
+                    } catch (ArrayIndexOutOfBoundsException exception) {
+                        exception.printStackTrace();
+                    }
+                    recipeName.setSelectedIndex(s);
+                    revalidate();
+                    repaint();
+                    break;
+                }
+            }
+        }
 
         recipeName.addActionListener(this);
         recipeName.setEditable(true);
 
+        portionField = new JTextField(String.valueOf(portions));
+
         mainpanel.add(new JLabel("Ricetta:"));
-        mainpanel.add(recipeName);
-        mainpanel.add(scrollPanel);
-        mainpanel.add(addButton);
+        mainpanel.add(recipeName, "span 2 1, grow");
+        mainpanel.add(new JLabel("Porzioni:"));
+        mainpanel.add(portionField, "grow");
+        mainpanel.add(new JLabel());
+        mainpanel.add(scrollPanel, "span 3 1, grow");
+        mainpanel.add(addButton, "span 3 1, grow");
 
         setContentPane(mainpanel);
         setLocation(380, 210);
-        setSize(300, 300);
+        setSize(300, 500);
         setVisible(true);
+
+        AddFromRecipeFrame self = this;
+
+        portionField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+            @Override
+            public void update(DocumentEvent e) {
+                boolean correct = true;
+                try {
+                    self.setPortions(Integer.parseInt(portionField.getText()));
+                } catch (NumberFormatException exception) {
+                    self.setPortions(1);
+                    correct = false;
+                }
+                if (correct && self.getPortions() > 0 && recipeName.getSelectedIndex() >= 0 && recipeName.getSelectedIndex() < recipeStrings.length) {
+                    Recipe selectedRecipe = Recipe.findRecipe(recipeList, idFromString(recipeStrings[recipeName.getSelectedIndex()]));
+                    for (int i = 0; i < selectedRecipe.getIngredients().size(); ++i) {
+                        fieldList.get(i).setText(String.valueOf(selectedRecipe.getIngredients().get(i).getQty() * self.getPortions()));
+                    }
+                }
+            }
+        });
     }
 
+    public int getPortions() {
+        return portions;
+    }
+
+    public void setPortions(int portions) {
+        this.portions = portions;
+    }
 
     static int idFromString(String string) {
         int out = 0;
@@ -115,7 +179,7 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
 
         if (e.getSource() == recipeName) {
             try {
-                boxPanel = new JPanel(new MigLayout("wrap 3, gapy 0", "5[130, grow, fill]10[50, fill]10[]20", ""));
+                boxPanel = new JPanel(new MigLayout("wrap 3, gapy 0", "5[130, grow, fill]10[50, fill]10[15]10", ""));
                 scrollPanel.setViewportView(boxPanel);
                 selectedRecipe = Recipe.findRecipe(recipeList, idFromString(recipeStrings[recipeName.getSelectedIndex()]));
 
@@ -124,8 +188,9 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
 
                 for (int i = 0; i < selectedRecipe.getIngredients().size(); ++i) {
                     boxList.add(new JCheckBox(selectedRecipe.getIngredients().get(i).getName()));
+                    boxList.get(i).setSelected(true);
                     fieldList.add(new JTextField());
-                    fieldList.get(i).setText(String.valueOf(selectedRecipe.getIngredients().get(i).getQty()));
+                    fieldList.get(i).setText(String.valueOf(selectedRecipe.getIngredients().get(i).getQty() * portions));
 
                     boxPanel.add(boxList.get(i));
                     boxPanel.add(fieldList.get(i), "grow");
@@ -134,10 +199,8 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
             } catch (ArrayIndexOutOfBoundsException exception) {
                 exception.printStackTrace();
             }
-
             revalidate();
             repaint();
-
         }
 
         if (e.getSource() == addButton && selectedRecipe != null) {
@@ -162,63 +225,28 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
             }
             if (correct) {
                 for (int i = 0; i < selectedRecipe.getIngredients().size(); ++i) {
-                    quantity = Integer.parseInt(fieldList.get(i).getText());
-                    int selectedIngredientId = selectedRecipe.getIngredients().get(i).getId();
-                    boolean added = false;
-                    for (IngredientQty inv : shoppingList) {
-                        if (inv.getId() == selectedIngredientId) {
-                            inv.setQty(inv.getQty() + quantity);
-                            added = true;
-                            break;
+                    if (boxList.get(i).isSelected()) {
+                        quantity = Integer.parseInt(fieldList.get(i).getText());
+                        int selectedIngredientId = selectedRecipe.getIngredients().get(i).getId();
+                        boolean added = false;
+                        for (IngredientQty inv : shoppingList) {
+                            if (inv.getId() == selectedIngredientId) {
+                                inv.setQty(inv.getQty() + quantity);
+                                added = true;
+                                break;
+                            }
                         }
-                    }
-                    if (!added) {
-                        IngredientQty selectedIngredientQty = new IngredientQty(Ingredient.findIngredient(ingredientList, selectedIngredientId), quantity);
-                        shoppingList.add(selectedIngredientQty);
+                        if (!added) {
+                            IngredientQty selectedIngredientQty = new IngredientQty(Ingredient.findIngredient(ingredientList, selectedIngredientId), quantity);
+                            shoppingList.add(selectedIngredientQty);
+                        }
                     }
                 }
 
-                Object[][] shoppingMatrix = IngredientQty.toMatrix(shoppingList);
-
-                DefaultTableModel shoppingModel = new DefaultTableModel(shoppingMatrix, new String[]{"ID", "Nome", "Qty"}) {
-                    @Override
-                    public boolean isCellEditable(int row, int column) {
-                        if (column == 0 || column == 1)
-                            return false;
-                        else
-                            return true;
-                    }
-                };
-
-                shoppingModel.addTableModelListener(new TableModelListener() {
-                    @Override
-                    public void tableChanged(TableModelEvent e) {
-                        if (shoppingTable.getSelectedRow() >= 0 && shoppingTable.getSelectedRow() < shoppingTable.getRowCount()) {
-                            int selectedRow = shoppingTable.getSelectedRow();
-                            shoppingTable.clearSelection();
-                            String newQty = (String) shoppingTable.getValueAt(selectedRow, 2);
-                            int Qty = Main.strtoint(newQty);
-                            IngredientQty tmpIngredientQty = IngredientQty.findIngredientQty(shoppingList, (int) shoppingTable.getValueAt(selectedRow, 0));
-                            if (Qty > 0)
-                                tmpIngredientQty.setQty(Qty);
-                            shoppingTable.setValueAt(tmpIngredientQty.getQty() + " " + tmpIngredientQty.stringType(), selectedRow, 2);
-                        }
-                    }
-                });
-
-                shoppingTable.setModel(shoppingModel);
-
-                shoppingTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-                shoppingTable.getColumnModel().getColumn(1).setPreferredWidth(750);
-                shoppingTable.getColumnModel().getColumn(2).setPreferredWidth(750);
-
+                callerPanel.redrawTable(shoppingList);
 
                 dispose();
-
-
             }
-
-
         }
     }
 }

@@ -180,7 +180,7 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
         loadingDialog.dispose();
 
         mainpanel = new JTabbedPane();
-        recipepanel = new RecipePanel(recipeList, ingredientList, shoppingList, inventoryList);
+        recipepanel = new RecipePanel(recipeList, ingredientList, shoppingList, inventoryList, shoppingpanel);
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -245,7 +245,7 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
         if (e.getSource() == mainpanel) {
             int tab = mainpanel.getSelectedIndex();
             if (tab == 0)
-                mainpanel.setComponentAt(0, new RecipePanel(recipeList, ingredientList, shoppingList, inventoryList));
+                mainpanel.setComponentAt(0, new RecipePanel(recipeList, ingredientList, shoppingList, inventoryList, shoppingpanel));
             if (tab == 1)
                 mainpanel.setComponentAt(1, new ShoppingPanel(recipeList, ingredientList, shoppingList, inventoryList));
             if (tab == 2)
