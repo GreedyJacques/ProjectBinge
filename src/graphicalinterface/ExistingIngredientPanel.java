@@ -125,6 +125,10 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Inserisci la quantita'");
                     correct = false;
                 }
+                if(quantity<=0){
+                    JOptionPane.showMessageDialog(null, "Inserisci una quantita' positiva");
+                    correct = false;
+                }
                 if (correct) {
                     Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList, idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
                     boolean added = false;

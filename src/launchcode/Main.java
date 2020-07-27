@@ -6,6 +6,7 @@ import domainclasses.recipes.IngredientQty;
 import domainclasses.recipes.Recipe;
 import graphicalinterface.*;
 
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -37,7 +38,7 @@ public class Main {
     }
 
 
-    public static void saveData(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList, DBManager db, boolean close){
+    public static void saveData(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList, DBManager db, boolean close, JDialog savingDialog){
         long saveStartTime = System.nanoTime();
 
         for (Recipe r : recipeList) {
@@ -193,5 +194,7 @@ public class Main {
 
         if(close)
             System.exit(0);
+        else
+            savingDialog.dispose();
     }
 }

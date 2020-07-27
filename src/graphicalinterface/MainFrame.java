@@ -226,7 +226,7 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
                 Runnable saveRunnableClose = new Runnable() {
                     @Override
                     public void run() {
-                        saveData(recipeList, ingredientList, shoppingList, inventoryList, db, true);
+                        saveData(recipeList, ingredientList, shoppingList, inventoryList, db, true, savingDialog);
                     }
                 };
 

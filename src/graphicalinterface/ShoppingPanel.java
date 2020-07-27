@@ -80,7 +80,7 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
                     shoppingTable.clearSelection();
                     String newQty = (String) shoppingTable.getValueAt(selectedRow, 2);
                     int Qty = Main.strtoint(newQty);
-                    IngredientQty tmpIngredientQty = IngredientQty.findIngredientQty(inventoryList, (int) shoppingTable.getValueAt(selectedRow, 0));
+                    IngredientQty tmpIngredientQty = IngredientQty.findIngredientQty(shoppingList, (int) shoppingTable.getValueAt(selectedRow, 0));
                     if (Qty > 0)
                         tmpIngredientQty.setQty(Qty);
                     shoppingTable.setValueAt(tmpIngredientQty.getQty() + " " + tmpIngredientQty.stringType(), selectedRow, 2);
