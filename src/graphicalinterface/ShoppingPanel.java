@@ -168,6 +168,7 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
 
         }
         if (e.getSource() == addFromRecipeButton) {
+            new AddFromRecipeFrame(recipeList,shoppingList,shoppingTable,ingredientList);
 
         }
         if (e.getSource() == searchButton) {

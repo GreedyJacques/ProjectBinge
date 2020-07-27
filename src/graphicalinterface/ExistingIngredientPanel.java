@@ -111,7 +111,7 @@ public class ExistingIngredientPanel extends JFrame implements ActionListener {
                 Ingredient selectedIngredient = Ingredient.findIngredient(ingredientList, idFromString(ingredientStrings[ingredientName.getSelectedIndex()]));
                 ingredientKcal.setText(selectedIngredient.getKcal() + " kCal per " + selectedIngredient.stringType());
             } catch (ArrayIndexOutOfBoundsException exception) {
-
+                //Do Nothing
             }
         }
 
