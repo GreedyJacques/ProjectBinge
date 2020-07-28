@@ -26,8 +26,6 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
     JTable recipeTable;
     DefaultTableModel recipeModel;
 
-    Recipe selectedRecipe;
-
     ArrayList<Recipe> recipeList;
     ArrayList<Ingredient> ingredientList;
     ArrayList<IngredientQty> shoppingList;
@@ -63,24 +61,10 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         filterButton.addActionListener(this);
         searchBar.addKeyListener(this);
 
-        Object[][] recipeMatrix = Recipe.toMatrix(recipeList);
-
-        recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        recipeTable = new JTable(recipeModel);
+        recipeTable = new JTable();
         JScrollPane scrollPanel = new JScrollPane(recipeTable);
 
-        recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-        recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
-        recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
-        recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-        recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
+        redrawTable(recipeList);
 
         scrollPanel.setBorder(BorderFactory.createTitledBorder("Ricette"));
 
@@ -95,18 +79,6 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         add(removeButton, "right");
         add(openButton, "right");
 
-        ListSelectionModel selectionModel = recipeTable.getSelectionModel();
-        selectionModel.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!selectionModel.isSelectionEmpty()) {
-                    int row = recipeTable.getSelectedRow();
-                    Object selectedId = recipeTable.getValueAt(row, 0);
-                    selectedRecipe = Recipe.findRecipe(recipeList, (int) selectedId);
-                }
-            }
-        });
-
         recipeTable.setAutoCreateRowSorter(true);
     }
 
@@ -119,61 +91,57 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         return out;
     }
 
+    public void redrawTable(ArrayList<Recipe> newRecipeList){
+        Object[][] recipeMatrix = Recipe.toMatrix(newRecipeList);
+
+        recipeModel = new DefaultTableModel(recipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        recipeTable.setModel(recipeModel);
+
+        recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
+        recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+        recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+        recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == searchButton) {
             String searchedThing = searchBar.getText();
             ArrayList<Recipe> searchedRecipeList = new ArrayList<>(findSearchedRecipes(searchedThing, recipeList));
 
-            Object[][] searchedRecipeMatrix = Recipe.toMatrix(searchedRecipeList);
-
-            DefaultTableModel searchedRecipeModel = new DefaultTableModel(searchedRecipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-
-            recipeTable.setModel(searchedRecipeModel);
-
-            recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-            recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
-            recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-            recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
-            recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-            recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
+            redrawTable(searchedRecipeList);
         }
 
         if (e.getSource() == filterButton) {
-            recipeTable.setModel(recipeModel);
-
-            recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-            recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
-            recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-            recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
-            recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-            recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
+            redrawTable(recipeList);
         }
 
         if (e.getSource() == addButton) {
             Recipe newRecipe = new Recipe(Recipe.getMaxId(recipeList) + 1);
             new RecipeDetailFrame(newRecipe, true, recipeList, recipeTable, ingredientList, shoppingList, shoppingPanel);
-            //TODO
         }
 
         if (e.getSource() == removeButton) {
-            if (selectedRecipe != null) {
+            if (recipeTable.getSelectedRow() >= 0 && recipeTable.getSelectedRow()<recipeTable.getRowCount()) {
                 int row = recipeTable.getSelectedRow();
                 Object selectedId = recipeTable.getValueAt(row, 0);
                 recipeList.remove(Recipe.findRecipe(recipeList, (int) selectedId));
-                recipeModel.removeRow(row);
-                selectedRecipe = null;
+                redrawTable(recipeList);
+                recipeTable.clearSelection();
             }
         }
 
         if (e.getSource() == openButton) {
-            if (selectedRecipe != null)
-                new RecipeDetailFrame(selectedRecipe, false, recipeList, recipeTable, ingredientList, shoppingList, shoppingPanel);
+            if (recipeTable.getSelectedRow() >= 0 && recipeTable.getSelectedRow()<recipeTable.getRowCount())
+                new RecipeDetailFrame(Recipe.findRecipe(recipeList, (int) recipeTable.getValueAt(recipeTable.getSelectedRow(), 0)), false, recipeList, recipeTable, ingredientList, shoppingList, shoppingPanel);
             else
                 return;
         }
@@ -192,22 +160,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 ArrayList<Recipe> searchedRecipeList = new ArrayList<>(findSearchedRecipes(searchedThing, recipeList));
 
-                Object[][] searchedRecipeMatrix = Recipe.toMatrix(searchedRecipeList);
-
-                DefaultTableModel searchedRecipeModel = new DefaultTableModel(searchedRecipeMatrix, new String[]{"ID", "Nome", "kCal/porz.", "T. Preparazione", "T. Cottura", "T. Totale"}) {
-                    @Override
-                    public boolean isCellEditable(int row, int column) {
-                        return false;
-                    }
-                };
-                recipeTable.setModel(searchedRecipeModel);
-
-                recipeTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-                recipeTable.getColumnModel().getColumn(1).setPreferredWidth(1500);
-                recipeTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-                recipeTable.getColumnModel().getColumn(3).setPreferredWidth(200);
-                recipeTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-                recipeTable.getColumnModel().getColumn(5).setPreferredWidth(200);
+                redrawTable(searchedRecipeList);
             }
         }
     }

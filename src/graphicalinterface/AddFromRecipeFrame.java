@@ -197,56 +197,63 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
                     boxPanel.add(new JLabel(selectedRecipe.getIngredients().get(i).stringType()));
                 }
             } catch (ArrayIndexOutOfBoundsException exception) {
-                exception.printStackTrace();
+                //Do Nothing
             }
             revalidate();
             repaint();
         }
 
-        if (e.getSource() == addButton && selectedRecipe != null) {
-
-            boolean correct = true;
-            int quantity = 0;
-            for (int i = 0; i < selectedRecipe.getIngredients().size(); ++i) {
-                if (boxList.get(i).isSelected()) {
-                    try {
-                        quantity = Integer.parseInt(fieldList.get(i).getText());
-                    } catch (NumberFormatException exception) {
-                        JOptionPane.showMessageDialog(null, "Inserisci la quantita' di " + selectedRecipe.getIngredients().get(i).getName());
-                        correct = false;
-                        break;
-                    }
-                    if (quantity <= 0) {
-                        JOptionPane.showMessageDialog(null, "Inserisci una quantita' positiva di " + selectedRecipe.getIngredients().get(i).getName());
-                        correct = false;
-                        break;
-                    }
-                }
+        if (e.getSource() == addButton) {
+            if(selectedRecipe == null){
+                JOptionPane.showMessageDialog(null, "Inserisci una ricetta valida");
+                return;
             }
-            if (correct) {
+            try {
+                boolean correct = true;
+                int quantity = 0;
                 for (int i = 0; i < selectedRecipe.getIngredients().size(); ++i) {
                     if (boxList.get(i).isSelected()) {
-                        quantity = Integer.parseInt(fieldList.get(i).getText());
-                        int selectedIngredientId = selectedRecipe.getIngredients().get(i).getId();
-                        boolean added = false;
-                        for (IngredientQty inv : shoppingList) {
-                            if (inv.getId() == selectedIngredientId) {
-                                inv.setQty(inv.getQty() + quantity);
-                                added = true;
-                                break;
-                            }
+                        try {
+                            quantity = Integer.parseInt(fieldList.get(i).getText());
+                        } catch (NumberFormatException exception) {
+                            JOptionPane.showMessageDialog(null, "Inserisci la quantita' di " + selectedRecipe.getIngredients().get(i).getName());
+                            correct = false;
+                            break;
                         }
-                        if (!added) {
-                            IngredientQty selectedIngredientQty = new IngredientQty(Ingredient.findIngredient(ingredientList, selectedIngredientId), quantity);
-                            shoppingList.add(selectedIngredientQty);
+                        if (quantity <= 0) {
+                            JOptionPane.showMessageDialog(null, "Inserisci una quantita' positiva di " + selectedRecipe.getIngredients().get(i).getName());
+                            correct = false;
+                            break;
                         }
                     }
                 }
+                if (correct) {
+                    for (int i = 0; i < selectedRecipe.getIngredients().size(); ++i) {
+                        if (boxList.get(i).isSelected()) {
+                            quantity = Integer.parseInt(fieldList.get(i).getText());
+                            int selectedIngredientId = selectedRecipe.getIngredients().get(i).getId();
+                            boolean added = false;
+                            for (IngredientQty inv : shoppingList) {
+                                if (inv.getId() == selectedIngredientId) {
+                                    inv.setQty(inv.getQty() + quantity);
+                                    added = true;
+                                    break;
+                                }
+                            }
+                            if (!added) {
+                                IngredientQty selectedIngredientQty = new IngredientQty(Ingredient.findIngredient(ingredientList, selectedIngredientId), quantity);
+                                shoppingList.add(selectedIngredientQty);
+                            }
+                        }
+                    }
 
-                if (callerPanel != null)
-                    callerPanel.redrawTable(shoppingList);
+                    if (callerPanel != null)
+                        callerPanel.redrawTable(shoppingList);
 
-                dispose();
+                    dispose();
+                }
+            } catch (ArrayIndexOutOfBoundsException exception) {
+                JOptionPane.showMessageDialog(null, "Inserisci una ricetta valida");
             }
         }
     }
