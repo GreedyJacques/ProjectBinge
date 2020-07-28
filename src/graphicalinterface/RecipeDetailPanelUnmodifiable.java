@@ -54,6 +54,14 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (recipe.getIngredients().isEmpty()) {
+                    return Object.class;
+                }
+                return getValueAt(0, columnIndex).getClass();
+            }
         };
 
         ingredientsTableUnmodifiable = new JTable(ingredientModelUnmodifiable);
@@ -97,6 +105,14 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
                         @Override
                         public boolean isCellEditable(int row, int column) {
                             return false;
+                        }
+
+                        @Override
+                        public Class<?> getColumnClass(int columnIndex) {
+                            if (recipe.getIngredients().isEmpty()) {
+                                return Object.class;
+                            }
+                            return getValueAt(0, columnIndex).getClass();
                         }
                     };
 
@@ -165,6 +181,14 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
+                }
+
+                @Override
+                public Class<?> getColumnClass(int columnIndex) {
+                    if (recipeList.isEmpty()) {
+                        return Object.class;
+                    }
+                    return getValueAt(0, columnIndex).getClass();
                 }
             };
 

@@ -183,6 +183,14 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
                 else
                     return false;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (ingredientQtyList.isEmpty()) {
+                    return Object.class;
+                }
+                return getValueAt(0, columnIndex).getClass();
+            }
         };
 
         ingredientsTableModifiable.setModel(ingredientModelModifiable);
