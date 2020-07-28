@@ -116,7 +116,7 @@ public class Main {
         for (Recipe r : recipeList) {
             formatter = new Formatter(new StringBuilder());
             formatter.format("INSERT INTO RecipeList (id, name, procedure, preptime, cooktime) VALUES (%d ,'%s', '%s', %d, %d)",
-                    r.getId(), r.getName(), r.getProcedure(), r.getPreptime(), r.getCooktime());
+                    r.getId(), r.getName().replace("'","''"), r.getProcedure().replace("'","''"), r.getPreptime(), r.getCooktime());
             try {
                 db.executeUpdate(formatter.toString());
             } catch (SQLException exception) {
@@ -135,7 +135,7 @@ public class Main {
             for (IngredientQty i : r.getIngredients()) {
                 formatter = new Formatter(new StringBuilder());
                 formatter.format("INSERT INTO Recipe%d (id, name, type, kcal, qty) VALUES (%d, '%s', %d, %f, %d)",
-                        r.getId(), i.getId(), i.getName(), i.getType(), i.getKcal(), i.getQty());
+                        r.getId(), i.getId(), i.getName().replace("'","''"), i.getType(), i.getKcal(), i.getQty());
                 try {
                     db.executeUpdate(formatter.toString());
                 } catch (SQLException exception) {
@@ -150,7 +150,7 @@ public class Main {
         for (IngredientQty i : shoppingList) {
             formatter = new Formatter(new StringBuilder());
             formatter.format("INSERT INTO ShoppingList (id, name, type, kcal, qty) VALUES (%d, '%s', %d, %f, %d)",
-                    i.getId(), i.getName(), i.getType(), i.getKcal(), i.getQty());
+                    i.getId(), i.getName().replace("'","''"), i.getType(), i.getKcal(), i.getQty());
             try {
                 db.executeUpdate(formatter.toString());
             } catch (SQLException exception) {
@@ -163,7 +163,7 @@ public class Main {
         for (IngredientQty i : inventoryList) {
             formatter = new Formatter(new StringBuilder());
             formatter.format("INSERT INTO InventoryList (id, name, type, kcal, qty) VALUES (%d, '%s', %d, %f, %d)",
-                    i.getId(), i.getName(), i.getType(), i.getKcal(), i.getQty());
+                    i.getId(), i.getName().replace("'","''"), i.getType(), i.getKcal(), i.getQty());
             try {
                 db.executeUpdate(formatter.toString());
             } catch (SQLException exception) {
@@ -176,7 +176,7 @@ public class Main {
         for (Ingredient i : ingredientList) {
             formatter = new Formatter(new StringBuilder());
             formatter.format("INSERT INTO IngredientList (id, name, type, kcal) VALUES (%d, '%s', %d, %f)",
-                    i.getId(), i.getName(), i.getType(), i.getKcal());
+                    i.getId(), i.getName().replace("'","''"), i.getType(), i.getKcal());
             try {
                 db.executeUpdate(formatter.toString());
             } catch (SQLException exception) {
