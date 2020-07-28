@@ -15,8 +15,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-        new MainFrame();}
-        catch (SQLException exception){
+            new MainFrame();
+        } catch (SQLException exception) {
             exception.printStackTrace();
         }
     }
@@ -38,7 +38,7 @@ public class Main {
     }
 
 
-    public static void saveData(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList, DBManager db, boolean close, JDialog savingDialog){
+    public static void saveData(ArrayList<Recipe> recipeList, ArrayList<Ingredient> ingredientList, ArrayList<IngredientQty> shoppingList, ArrayList<IngredientQty> inventoryList, DBManager db, boolean close, JDialog savingDialog) {
         long saveStartTime = System.nanoTime();
 
         for (Recipe r : recipeList) {
@@ -46,27 +46,57 @@ public class Main {
                 db.executeUpdate("DROP TABLE IF EXISTS Recipe" + r.getId());
             } catch (SQLException exception) {
                 exception.printStackTrace();
+                try {
+                    db.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                return;
             }
         }
         try {
             db.executeUpdate("DROP TABLE RecipeList");
         } catch (SQLException exception) {
             exception.printStackTrace();
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return;
         }
         try {
             db.executeUpdate("DROP TABLE ShoppingList");
         } catch (SQLException exception) {
             exception.printStackTrace();
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return;
         }
         try {
             db.executeUpdate("DROP TABLE InventoryList");
         } catch (SQLException exception) {
             exception.printStackTrace();
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return;
         }
         try {
             db.executeUpdate("DROP TABLE IngredientList");
         } catch (SQLException exception) {
             exception.printStackTrace();
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return;
         }
 
         try {
@@ -78,6 +108,12 @@ public class Main {
                     "cooktime INTEGER)");
         } catch (SQLException exception) {
             exception.printStackTrace();
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return;
         }
         try {
             db.executeUpdate("CREATE TABLE ShoppingList (" +
@@ -88,6 +124,12 @@ public class Main {
                     "qty INTEGER)");
         } catch (SQLException exception) {
             exception.printStackTrace();
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return;
         }
         try {
             db.executeUpdate("CREATE TABLE InventoryList (" +
@@ -98,6 +140,12 @@ public class Main {
                     "qty INTEGER)");
         } catch (SQLException exception) {
             exception.printStackTrace();
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return;
         }
         try {
             db.executeUpdate("CREATE TABLE IngredientList (" +
@@ -107,20 +155,32 @@ public class Main {
                     "kcal DOUBLE)");
         } catch (SQLException exception) {
             exception.printStackTrace();
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return;
         }
 
         Formatter formatter;
 
-        System.out.println("Saving Recipe List...(" + (System.nanoTime()-saveStartTime)/1000000 + "ms)");
+        System.out.println("Saving Recipe List...(" + (System.nanoTime() - saveStartTime) / 1000000 + "ms)");
 
         for (Recipe r : recipeList) {
             formatter = new Formatter(new StringBuilder());
             formatter.format("INSERT INTO RecipeList (id, name, procedure, preptime, cooktime) VALUES (%d ,'%s', '%s', %d, %d)",
-                    r.getId(), r.getName().replace("'","''"), r.getProcedure().replace("'","''"), r.getPreptime(), r.getCooktime());
+                    r.getId(), r.getName().replace("'", "''"), r.getProcedure().replace("'", "''"), r.getPreptime(), r.getCooktime());
             try {
                 db.executeUpdate(formatter.toString());
             } catch (SQLException exception) {
                 exception.printStackTrace();
+                try {
+                    db.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                return;
             }
             try {
                 db.executeUpdate("CREATE TABLE Recipe" + r.getId() + " (" +
@@ -131,60 +191,90 @@ public class Main {
                         "qty INTEGER)");
             } catch (SQLException exception) {
                 exception.printStackTrace();
+                try {
+                    db.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                return;
             }
             for (IngredientQty i : r.getIngredients()) {
                 formatter = new Formatter(new StringBuilder());
                 formatter.format("INSERT INTO Recipe%d (id, name, type, kcal, qty) VALUES (%d, '%s', %d, %f, %d)",
-                        r.getId(), i.getId(), i.getName().replace("'","''"), i.getType(), i.getKcal(), i.getQty());
+                        r.getId(), i.getId(), i.getName().replace("'", "''"), i.getType(), i.getKcal(), i.getQty());
                 try {
                     db.executeUpdate(formatter.toString());
                 } catch (SQLException exception) {
                     exception.printStackTrace();
+                    try {
+                        db.close();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                    return;
                 }
             }
-            System.out.println("Saved Recipe " + r.getId() + " Ingredients(" + (System.nanoTime()-saveStartTime)/1000000 + "ms)");
+            System.out.println("Saved Recipe " + r.getId() + " Ingredients(" + (System.nanoTime() - saveStartTime) / 1000000 + "ms)");
         }
 
-        System.out.println("Saving Shopping List...(" + (System.nanoTime()-saveStartTime)/1000000 + "ms)");
+        System.out.println("Saving Shopping List...(" + (System.nanoTime() - saveStartTime) / 1000000 + "ms)");
 
         for (IngredientQty i : shoppingList) {
             formatter = new Formatter(new StringBuilder());
             formatter.format("INSERT INTO ShoppingList (id, name, type, kcal, qty) VALUES (%d, '%s', %d, %f, %d)",
-                    i.getId(), i.getName().replace("'","''"), i.getType(), i.getKcal(), i.getQty());
+                    i.getId(), i.getName().replace("'", "''"), i.getType(), i.getKcal(), i.getQty());
             try {
                 db.executeUpdate(formatter.toString());
             } catch (SQLException exception) {
                 exception.printStackTrace();
+                try {
+                    db.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                return;
             }
         }
 
-        System.out.println("Saving Inventory List...(" + (System.nanoTime()-saveStartTime)/1000000 + "ms)");
+        System.out.println("Saving Inventory List...(" + (System.nanoTime() - saveStartTime) / 1000000 + "ms)");
 
         for (IngredientQty i : inventoryList) {
             formatter = new Formatter(new StringBuilder());
             formatter.format("INSERT INTO InventoryList (id, name, type, kcal, qty) VALUES (%d, '%s', %d, %f, %d)",
-                    i.getId(), i.getName().replace("'","''"), i.getType(), i.getKcal(), i.getQty());
+                    i.getId(), i.getName().replace("'", "''"), i.getType(), i.getKcal(), i.getQty());
             try {
                 db.executeUpdate(formatter.toString());
             } catch (SQLException exception) {
                 exception.printStackTrace();
+                try {
+                    db.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                return;
             }
         }
 
-        System.out.println("Saving Ingredient List...(" + (System.nanoTime()-saveStartTime)/1000000 + "ms)");
+        System.out.println("Saving Ingredient List...(" + (System.nanoTime() - saveStartTime) / 1000000 + "ms)");
 
         for (Ingredient i : ingredientList) {
             formatter = new Formatter(new StringBuilder());
             formatter.format("INSERT INTO IngredientList (id, name, type, kcal) VALUES (%d, '%s', %d, %f)",
-                    i.getId(), i.getName().replace("'","''"), i.getType(), i.getKcal());
+                    i.getId(), i.getName().replace("'", "''"), i.getType(), i.getKcal());
             try {
                 db.executeUpdate(formatter.toString());
             } catch (SQLException exception) {
                 exception.printStackTrace();
+                try {
+                    db.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                return;
             }
         }
 
-        System.out.println("Closing...(" + (System.nanoTime()-saveStartTime)/1000000 + "ms)");
+        System.out.println("Closing...(" + (System.nanoTime() - saveStartTime) / 1000000 + "ms)");
 
         try {
             db.close();
@@ -192,7 +282,7 @@ public class Main {
             exception.printStackTrace();
         }
 
-        if(close)
+        if (close)
             System.exit(0);
         else
             savingDialog.dispose();

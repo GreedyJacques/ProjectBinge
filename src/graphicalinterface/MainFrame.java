@@ -206,7 +206,9 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
         setContentPane(mainpanel);
         setLocation(350, 180);
         setSize(1280, 720);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new Dimension(1280, 720));
+
         setVisible(true);
 
         addWindowListener(new WindowAdapter() {
@@ -227,6 +229,11 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
                     @Override
                     public void run() {
                         saveData(recipeList, ingredientList, shoppingList, inventoryList, db, true, savingDialog);
+                        try {
+                            db = new DBManager(DBManager.JDBCDriverSQLite, DBManager.JDBCURLSQLite);
+                        } catch (SQLException | ClassNotFoundException exception) {
+                            exception.printStackTrace();
+                        }
                     }
                 };
 
