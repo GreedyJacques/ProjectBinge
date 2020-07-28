@@ -143,6 +143,7 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
 
         procedureTextUnmodifiable.setEditable(false);
         procedureTextUnmodifiable.setLineWrap(true);
+        procedureTextUnmodifiable.setWrapStyleWord(true);
 
         ingredientsTableUnmodifiable.setAutoCreateRowSorter(true);
     }

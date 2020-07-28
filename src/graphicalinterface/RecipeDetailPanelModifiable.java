@@ -109,6 +109,7 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
         cookModifiable.add(new JLabel(" min"));
 
         procedureTextModifiable.setLineWrap(true);
+        procedureTextModifiable.setWrapStyleWord(true);
 
         ingredientsTableModifiable.setAutoCreateRowSorter(true);
     }
