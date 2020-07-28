@@ -243,7 +243,8 @@ public class AddFromRecipeFrame extends JFrame implements ActionListener {
                     }
                 }
 
-                callerPanel.redrawTable(shoppingList);
+                if (callerPanel != null)
+                    callerPanel.redrawTable(shoppingList);
 
                 dispose();
             }
