@@ -157,6 +157,14 @@ public class ShoppingPanel extends JPanel implements ActionListener, KeyListener
                 else
                     return true;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (ingredientQtyList.isEmpty()) {
+                    return Object.class;
+                }
+                return getValueAt(0, columnIndex).getClass();
+            }
         };
 
         shoppingTable.setModel(ingredientsModel);

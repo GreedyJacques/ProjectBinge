@@ -78,10 +78,10 @@ public class RecipeDetailPanelModifiable extends JPanel implements ActionListene
         addIngredientButton.addActionListener(this);
         removeIngredientButton.addActionListener(this);
 
-        acceptButton.setPreferredSize(new Dimension(175, 50));
-        cancelButton.setPreferredSize(new Dimension(175, 50));
-        addIngredientButton.setPreferredSize(new Dimension(50, 25));
-        removeIngredientButton.setPreferredSize(new Dimension(50, 25));
+        acceptButton.setMinimumSize(new Dimension(175, 50));
+        cancelButton.setMinimumSize(new Dimension(175, 50));
+        addIngredientButton.setMinimumSize(new Dimension(50, 25));
+        removeIngredientButton.setMinimumSize(new Dimension(50, 25));
 
         add(nameModifiable, "span 4 1,grow");
         add(new JLabel(""));

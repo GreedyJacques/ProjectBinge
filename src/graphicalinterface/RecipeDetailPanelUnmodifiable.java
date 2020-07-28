@@ -118,9 +118,9 @@ public class RecipeDetailPanelUnmodifiable extends JPanel implements ActionListe
             }
         });
 
-        addShoppingButton.setPreferredSize(new Dimension(175, 50));
-        removeButton.setPreferredSize(new Dimension(175, 50));
-        modifyButton.setPreferredSize(new Dimension(175, 50));
+        addShoppingButton.setMinimumSize(new Dimension(175, 50));
+        removeButton.setMinimumSize(new Dimension(175, 50));
+        modifyButton.setMinimumSize(new Dimension(175, 50));
 
         add(nameUnmodifiable, "span 3 1, grow");
         add(new JLabel(""), "wrap");

@@ -99,6 +99,14 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (newRecipeList.isEmpty()) {
+                    return Object.class;
+                }
+                return getValueAt(0, columnIndex).getClass();
+            }
         };
 
         recipeTable.setModel(recipeModel);
