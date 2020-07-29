@@ -43,7 +43,7 @@ public class RecipePanel extends JPanel implements ActionListener, KeyListener {
         addButton = new JButton("AGGIUNGI");
         removeButton = new JButton("RIMUOVI");
         openButton = new JButton("APRI");
-        filterButton = new JButton("FILTRI");
+        filterButton = new JButton("RESET");
         searchButton = new JButton("CERCA");
 
         searchBar = new JTextField("");

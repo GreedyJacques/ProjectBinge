@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            new MainFrame();
+            new MainFrame(DBManager.JDBCURLSQLite);
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -51,11 +51,13 @@ public class Main {
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
+                JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+                savingDialog.dispose();
                 return;
             }
         }
         try {
-            db.executeUpdate("DROP TABLE RecipeList");
+            db.executeUpdate("DROP TABLE IF EXISTS RecipeList");
         } catch (SQLException exception) {
             exception.printStackTrace();
             try {
@@ -63,10 +65,12 @@ public class Main {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+            savingDialog.dispose();
             return;
         }
         try {
-            db.executeUpdate("DROP TABLE ShoppingList");
+            db.executeUpdate("DROP TABLE IF EXISTS ShoppingList");
         } catch (SQLException exception) {
             exception.printStackTrace();
             try {
@@ -74,10 +78,12 @@ public class Main {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+            savingDialog.dispose();
             return;
         }
         try {
-            db.executeUpdate("DROP TABLE InventoryList");
+            db.executeUpdate("DROP TABLE IF EXISTS InventoryList");
         } catch (SQLException exception) {
             exception.printStackTrace();
             try {
@@ -85,10 +91,12 @@ public class Main {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+            savingDialog.dispose();
             return;
         }
         try {
-            db.executeUpdate("DROP TABLE IngredientList");
+            db.executeUpdate("DROP TABLE IF EXISTS IngredientList");
         } catch (SQLException exception) {
             exception.printStackTrace();
             try {
@@ -96,6 +104,8 @@ public class Main {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+            savingDialog.dispose();
             return;
         }
 
@@ -113,6 +123,8 @@ public class Main {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+            savingDialog.dispose();
             return;
         }
         try {
@@ -129,6 +141,8 @@ public class Main {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+            savingDialog.dispose();
             return;
         }
         try {
@@ -145,6 +159,8 @@ public class Main {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+            savingDialog.dispose();
             return;
         }
         try {
@@ -160,6 +176,8 @@ public class Main {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+            savingDialog.dispose();
             return;
         }
 
@@ -180,6 +198,8 @@ public class Main {
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
+                JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+                savingDialog.dispose();
                 return;
             }
             try {
@@ -196,6 +216,8 @@ public class Main {
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
+                JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+                savingDialog.dispose();
                 return;
             }
             for (IngredientQty i : r.getIngredients()) {
@@ -211,6 +233,8 @@ public class Main {
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     }
+                    JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+                    savingDialog.dispose();
                     return;
                 }
             }
@@ -232,6 +256,8 @@ public class Main {
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
+                JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+                savingDialog.dispose();
                 return;
             }
         }
@@ -251,6 +277,8 @@ public class Main {
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
+                JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+                savingDialog.dispose();
                 return;
             }
         }
@@ -270,6 +298,8 @@ public class Main {
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
+                JOptionPane.showMessageDialog(null, "Salvataggio dei dati fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+                savingDialog.dispose();
                 return;
             }
         }

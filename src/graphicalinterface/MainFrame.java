@@ -29,6 +29,11 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
     ArrayList<IngredientQty> shoppingList;
     ArrayList<IngredientQty> inventoryList;
 
+    JMenuBar menuBar;
+    JMenu file;
+    JMenuItem openFile;
+    JMenuItem saveFile;
+
     JTabbedPane mainpanel;
     RecipePanel recipepanel;
     ShoppingPanel shoppingpanel;
@@ -37,7 +42,7 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
     protected DBManager db;
     protected ResultSet rs;
 
-    public MainFrame() throws SQLException {
+    public MainFrame(String sqliteURL) throws SQLException {
         super("Project Binge");
 
         try {
@@ -53,7 +58,7 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
         }
 
         try {
-            db = new DBManager(DBManager.JDBCDriverSQLite, DBManager.JDBCURLSQLite);
+            db = new DBManager(DBManager.JDBCDriverSQLite, sqliteURL);
         } catch (SQLException | ClassNotFoundException exception) {
             exception.printStackTrace();
         }
@@ -182,12 +187,12 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
         mainpanel = new JTabbedPane();
         recipepanel = new RecipePanel(recipeList, ingredientList, shoppingList, inventoryList, shoppingpanel);
 
-        JMenuBar menuBar = new JMenuBar();
+        menuBar = new JMenuBar();
 
-        JMenu file = new JMenu("File");
+        file = new JMenu("File");
 
-        JMenuItem openFile = new JMenuItem("Apri");
-        JMenuItem saveFile = new JMenuItem("Salva");
+        openFile = new JMenuItem("Apri");
+        saveFile = new JMenuItem("Salva");
 
         file.add(openFile);
         file.add(saveFile);
@@ -195,6 +200,9 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
         menuBar.add(file);
 
         setJMenuBar(menuBar);
+
+        openFile.addActionListener(this);
+        saveFile.addActionListener(this);
 
         mainpanel.addTab("Ricette", recipepanel);
         mainpanel.addTab("Lista Spesa", shoppingpanel);
@@ -244,7 +252,74 @@ public class MainFrame extends JFrame implements ActionListener, ChangeListener 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //TODO
+        if (e.getSource() == openFile) {
+            JFileChooser openChooser = new JFileChooser();
+
+            int returnVal = openChooser.showOpenDialog(null);
+
+            JDialog loadingDialog = new JDialog();
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    loadingDialog.setVisible(true);
+                    loadingDialog.setLocation(800, 400);
+                    loadingDialog.setAlwaysOnTop(true);
+                    loadingDialog.setSize(250, 100);
+                    JLabel loadingLabel = new JLabel("Caricamento dei Dati...");
+                    loadingLabel.setHorizontalAlignment(JLabel.CENTER);
+                    loadingLabel.setVerticalAlignment(JLabel.CENTER);
+                    loadingDialog.add(loadingLabel);
+
+                    new MainFrame("jdbc:sqlite:" + openChooser.getSelectedFile().getPath());
+                    dispose();
+                } catch (SQLException exception) {
+                    exception.printStackTrace();
+                } finally {
+                    loadingDialog.dispose();
+                }
+            }
+        }
+        if (e.getSource() == saveFile) {
+            JFileChooser saveChooser = new JFileChooser();
+
+            int returnVal = saveChooser.showSaveDialog(null);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    JDialog savingDialog = new JDialog();
+                    savingDialog.setLocation(800, 400);
+                    savingDialog.setAlwaysOnTop(true);
+                    savingDialog.setSize(250, 100);
+                    JLabel savingLabel = new JLabel("Salvataggio dei Dati...");
+                    savingLabel.setHorizontalAlignment(JLabel.CENTER);
+                    savingLabel.setVerticalAlignment(JLabel.CENTER);
+                    savingDialog.add(savingLabel);
+                    savingDialog.setVisible(true);
+
+                    DBManager newdb = new DBManager(DBManager.JDBCDriverSQLite, "jdbc:sqlite:" + saveChooser.getSelectedFile().getPath());
+
+                    Runnable saveRunnableKeep = new Runnable() {
+                        @Override
+                        public void run() {
+                            saveData(recipeList, ingredientList, shoppingList, inventoryList, newdb, false, savingDialog);
+                            try {
+                                db = new DBManager(DBManager.JDBCDriverSQLite, DBManager.JDBCURLSQLite);
+                            } catch (SQLException | ClassNotFoundException exception) {
+                                exception.printStackTrace();
+                            }
+                        }
+                    };
+
+                    SwingUtilities.invokeLater(saveRunnableKeep);
+
+                } catch (ClassNotFoundException classNotFoundException) {
+                    classNotFoundException.printStackTrace();
+                } catch (SQLException exception) {
+                    exception.printStackTrace();
+                }
+
+            }
+        }
     }
 
     @Override
