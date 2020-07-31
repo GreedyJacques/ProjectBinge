@@ -49,6 +49,15 @@ public class IngredientQty extends Ingredient {
         return new IngredientQty();
     }
 
+    public static boolean hasIngredient(ArrayList<IngredientQty> ingredients, IngredientQty ingredient){
+        for(IngredientQty i : ingredients){
+            if(i.getId() == ingredient.getQty()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static ArrayList<IngredientQty> findSearchedIngredientQty(String searchedString, ArrayList<IngredientQty> ingredientQtyList){
         ArrayList<IngredientQty> out = new ArrayList<>();
         for (IngredientQty r : ingredientQtyList) {

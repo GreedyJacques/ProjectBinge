@@ -119,6 +119,15 @@ public class Recipe {
         return new Recipe();
     }
 
+    public boolean hasIngredient(IngredientQty ingredient){
+        for(IngredientQty i : this.ingredients){
+            if(i.getId() == ingredient.getId()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public double getKcal() {
         double out = 0;
         for (IngredientQty i : ingredients)
